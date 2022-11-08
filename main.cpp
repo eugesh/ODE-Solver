@@ -2,17 +2,19 @@
 #include <fstream>
 #include <iomanip>
 
-#include "Integrator.h"
+#include "ODESolver.h"
 
 int main()
 {
-    Integrator integrator = Integrator();
+    ODESolver odeSolver = ODESolver();
 
-    integrator.rk();
+    // rk
+
+    odeSolver.rk();
 
     std::ofstream rk("rk.dat");
 
-    for (auto &step: integrator.Result)
+    for (auto &step: odeSolver.Result)
     {
         auto [ t, x ] = step;
 
@@ -27,6 +29,51 @@ int main()
     }
 
     rk.close();
+
+    // ae
+
+    odeSolver.ae();
+
+    std::ofstream ae("ae.dat");
+
+    for (auto &step: odeSolver.Result)
+    {
+        auto [ t, x ] = step;
+
+        ae << std::fixed << std::setprecision(10) << t << " ";
+
+        for (auto &item: x)
+        {
+            ae << item << " ";
+        }
+
+        ae << std::endl;
+    }
+
+    ae.close();
+
+    // ai
+
+    odeSolver.ai();
+
+    std::ofstream ai("ae.dat");
+
+    for (auto &step: odeSolver.Result)
+    {
+        auto [ t, x ] = step;
+
+        ai << std::fixed << std::setprecision(10) << t << " ";
+
+        for (auto &item: x)
+        {
+            ai << item << " ";
+        }
+
+        ai << std::endl;
+    }
+
+    ai.close();
+
 
     return 0;
 }
