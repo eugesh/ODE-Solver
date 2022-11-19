@@ -5,4 +5,10 @@ set(CMAKE_CXX_COMPILER g++-12)
 add_compile_options(-Wall -Wextra -Wfloat-equal -Wundef -Wcast-align -Wwrite-strings -Wlogical-op -Wmissing-declarations -Wredundant-decls -Wshadow -Woverloaded-virtual -pedantic)
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(numerical_task_9 main.cpp Context.cpp Context.h ODESolver.cpp ODESolver.h)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
+
+add_executable(numerical_task_9 src/main.cpp
+        src/Context.cpp src/Context.h
+        src/ODESolver.cpp src/ODESolver.h
+        src/Algebra.cpp src/Algebra.h
+        src/NewtonSolver.cpp src/NewtonSolver.h)

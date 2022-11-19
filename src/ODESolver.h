@@ -59,20 +59,23 @@ private:
     /**
      * Factorial
      */
-    static uint32_t factorial(uint32_t x);
+    static int32_t factorial(int32_t x);
 
     /**
      * Integration method from 0 to 1 with 1000 intervals
      */
 
-    static double integrate(double (*integrand)(uint32_t j, double z), uint32_t j);
+    static double integrate(double (*integrand)(int32_t j, double z), int32_t j);
 
     /**
-     * Integrands for Adams methods
+     * Integrand for Adams method (ea)
      */
+    static double integrandForA(int32_t j, double z);
 
-    static double integrandForA(uint32_t j, double z);
-    static double integrandForB(uint32_t j, double z);
+    /**
+     * Integrand for Adams method (ea)
+     */
+    static double integrandForB(int32_t j, double z);
 };
 
 

@@ -56,7 +56,7 @@ int main()
 
     odeSolver.ai();
 
-    std::ofstream ai("ae.dat");
+    std::ofstream ai("ai.dat");
 
     for (auto &step: odeSolver.Result)
     {
@@ -73,7 +73,6 @@ int main()
     }
 
     ai.close();
-
 
     return 0;
 }

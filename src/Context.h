@@ -32,6 +32,13 @@ public:
      * Order of Adams interpolation / extrapolation method
      */
     static uint32_t n;
+    /**
+     * Number of integration steps in calculating Anj and Bnj for Adams methods
+     */
+    static uint32_t in;
+
+    static double newton_derive_step;
+    static double newton_precision;
 };
 
 #endif //NUMERICAL_TASK_9_CONTEXT_H
