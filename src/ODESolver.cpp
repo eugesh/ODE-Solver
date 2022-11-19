@@ -208,7 +208,7 @@ void ODESolver::ai()
 
     // Create n initial values of f
     std::vector<std::vector<double>> fs(Context::n - 1);
-    for (uint32_t i = 0; i < Context::n - 1; ++i)
+    for (uint32_t i = 0; i < Result.size(); ++i)
     {
         uint32_t index = Result.size() - 1 - i;
         fs.at(i) = Context::f(
@@ -221,7 +221,7 @@ void ODESolver::ai()
     {
 
         std::function<std::vector<double>(std::vector<double>)> f =
-                [&fs, t, this](std::vector<double> y) -> std::vector<double>
+                [&fs, t, this, &x](std::vector<double> y) -> std::vector<double>
                 {
                     std::vector<double> res = Context::f(t, y);
 
@@ -230,7 +230,7 @@ void ODESolver::ai()
                         re *= B.at(Context::n - 1);
                     }
 
-                    for (uint32_t j = 0; j < Context::n - 1; ++j)
+                    for (uint32_t j = 0; j < fs.size(); ++j)
                     {
                         for (uint32_t i = 0; i < res.size(); ++i)
                         {
@@ -245,7 +245,7 @@ void ODESolver::ai()
 
                     for (uint32_t i = 0; i < res.size(); ++i)
                     {
-                        res.at(i) += fs.at(fs.size() - 1).at(i) - y.at(i);
+                        res.at(i) += x.at(i) - y.at(i);
                     }
 
                     return res;
@@ -281,9 +281,9 @@ void ODESolver::computeB()
     //TODO optimize this
     for (int32_t j = -1; j < (int32_t) Context::n - 1; ++j)
     {
-        A.at(j + 1) = pow(-1.0, j + 1) / (factorial(j + 1) * factorial((int32_t) Context::n - 2 - j));
+        B.at(j + 1) = pow(-1.0, j + 1) / (factorial(j + 1) * factorial((int32_t) Context::n - 2 - j));
 
-        A.at(j + 1) *= integrate(integrandForB, j);
+        B.at(j + 1) *= integrate(integrandForB, j);
     }
 }
 
