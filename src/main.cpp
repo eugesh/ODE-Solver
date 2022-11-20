@@ -11,18 +11,22 @@ int main()
             [](double t, std::vector<double> x) -> std::vector<double>{
         std::vector<double> res(x.size());
 
-        res.at(0) = x.at(0) - 7 + x.at(1);
-        res.at(1) = sin(x.at(0) * x.at(1));
-        res.at(2) = t * x.at(2);
+        double s = 10;
+        double p = 20;
+        double b = 8.0 / 5.0;
+
+        res.at(0) = s * (x.at(1) - x.at(0));
+        res.at(1) = x.at(0) * (p - x.at(2)) - x.at(1);
+        res.at(2) = x.at(0) * x.at(1) - b * x.at(2);
 
         return res;
     };
 
     Context context = Context(f);
-    context.x_0 = {0, 1, 1, 1};
+    context.x_0 = {0, 0.5, 1.1, 1};
     context.n = 5;
     context.h = 10e-5;
-    context.t_end = 4;
+    context.t_end = 20;
     ODESolver odeSolver = ODESolver(context);
 
     // rk
