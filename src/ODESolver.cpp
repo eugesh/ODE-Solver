@@ -6,20 +6,18 @@
 
 #include <cmath>
 #include <algorithm>
-#include <iostream>
 #include <functional>
-
-#include "NewtonSolver.h"
+#include <utility>
 
 void ODESolver::rk()
 {
     Result.clear();
-    double t = Context::x_0.at(0); // Get t_0 from x_0
-    std::vector<double> x = Context::x_0;
+    double t = m_context.x_0.at(0); // Get t_0 from x_0
+    std::vector<double> x = m_context.x_0;
 
     x.erase(x.begin()); // Remove t_0 from x_0
 
-    while (t < Context::t_end)
+    while (t < m_context.t_end)
     {
 
         // TODO optimize this
@@ -35,70 +33,70 @@ void ODESolver::rk()
 
         Result.emplace_back(t, x);
 
-        t += Context::h;
+        t += m_context.h;
     }
 }
 
-std::vector<double> ODESolver::k1(double t, std::vector<double> x)
+std::vector<double> ODESolver::k1(double t, std::vector<double> x) const
 {
-    std::vector<double> res = Context::f(t, std::move(x));
+    std::vector<double> res = m_context.f(t, std::move(x));
 
     for (auto &item: res)
     {
-        item *= Context::h;
+        item *= m_context.h;
     }
 
     return res;
 }
 
-std::vector<double> ODESolver::k2(double t, std::vector<double> x, std::vector<double> k_1)
+std::vector<double> ODESolver::k2(double t, std::vector<double> x, std::vector<double> k_1) const
 {
     for (uint32_t i = 0; i < x.size(); ++i)
     {
         x.at(i) += k_1.at(i) / 2;
     }
 
-    std::vector<double> res = Context::f(t + Context::h / 2, std::move(x));
+    std::vector<double> res = m_context.f(t + m_context.h / 2, std::move(x));
 
     for (auto &item: res)
     {
-        item *= Context::h;
+        item *= m_context.h;
     }
 
     return res;
 
 }
 
-std::vector<double> ODESolver::k3(double t, std::vector<double> x, std::vector<double> k_2)
+std::vector<double> ODESolver::k3(double t, std::vector<double> x, std::vector<double> k_2) const
 {
     for (uint32_t i = 0; i < x.size(); ++i)
     {
         x.at(i) += k_2.at(i) / 2;
     }
 
-    std::vector<double> res = Context::f(t + Context::h / 2, std::move(x));
+    std::vector<double> res = m_context.f(t + m_context.h / 2, std::move(x));
 
     for (auto &item: res)
     {
-        item *= Context::h;
+        item *= m_context.h;
     }
 
     return res;
 
 }
 
-std::vector<double> ODESolver::k4(double t, std::vector<double> x, std::vector<double> k_3)
+std::vector<double> ODESolver::k4(double t, std::vector<double> x, std::vector<double> k_3) const
 {
     for (uint32_t i = 0; i < x.size(); ++i)
     {
         x.at(i) += k_3.at(i);
     }
 
-    std::vector<double> res = Context::f(t + Context::h, std::move(x));
+    std::vector<double> res = m_context.f(t + m_context.h, std::move(x));
 
     for (auto &item: res)
     {
-        item *= Context::h;
+        item *= m_context.h;
     }
 
     return res;
@@ -108,8 +106,8 @@ std::vector<double> ODESolver::k4(double t, std::vector<double> x, std::vector<d
 void ODESolver::ae()
 {
     Result.clear();
-    double t = Context::x_0.at(0); // Get t_0 from x_0
-    std::vector<double> x = Context::x_0;
+    double t = m_context.x_0.at(0); // Get t_0 from x_0
+    std::vector<double> x = m_context.x_0;
 
     x.erase(x.begin()); // Remove t_0 from x_0
 
@@ -117,7 +115,7 @@ void ODESolver::ae()
 
     // Compute n initial values of x
 
-    for (uint32_t j = 0; j < Context::n; ++j)
+    for (uint32_t j = 0; j < m_context.n; ++j)
     {
 
         // TODO optimize this
@@ -133,51 +131,51 @@ void ODESolver::ae()
 
         Result.emplace_back(t, x);
 
-        t += Context::h;
+        t += m_context.h;
     }
 
     // Run Adams method
 
     // Create n initial values of f
-    std::vector<std::vector<double>> fs(Context::n);
-    for (uint32_t i = 0; i < Context::n; ++i)
+    std::vector<std::vector<double>> fs(m_context.n);
+    for (uint32_t i = 0; i < m_context.n; ++i)
     {
         uint32_t index = Result.size() - 1 - i;
-        fs.at(i) = Context::f(
+        fs.at(i) = m_context.f(
                 std::get<0>(Result.at(index)),
                 std::get<1>(Result.at(index))
         );
     }
 
-    while (t < Context::t_end)
+    while (t < m_context.t_end)
     {
 
-        for (uint32_t j = 0; j < Context::n; ++j)
+        for (uint32_t j = 0; j < m_context.n; ++j)
         {
             for (uint32_t i = 0; i < x.size(); ++i)
             {
-                x.at(i) += A.at(j) * fs.at(j).at(i) * Context::h;
+                x.at(i) += A.at(j) * fs.at(j).at(i) * m_context.h;
             }
         }
 
         Result.emplace_back(t, x);
 
-        t += Context::h;
+        t += m_context.h;
 
         for (uint32_t i = 0; i < fs.size() - 1; ++i)
         {
             fs.at(i) = std::move(fs.at(i + 1));
         }
 
-        fs.at(fs.size() - 1) = Context::f(t, x);
+        fs.at(fs.size() - 1) = m_context.f(t, x);
     }
 }
 
 void ODESolver::ai()
 {
     Result.clear();
-    double t = Context::x_0.at(0); // Get t_0 from x_0
-    std::vector<double> x = Context::x_0;
+    double t = m_context.x_0.at(0); // Get t_0 from x_0
+    std::vector<double> x = m_context.x_0;
 
     x.erase(x.begin()); // Remove t_0 from x_0
 
@@ -185,7 +183,7 @@ void ODESolver::ai()
 
     // Compute n initial values of x
 
-    for (uint32_t j = 0; j < Context::n - 1; ++j)
+    for (uint32_t j = 0; j < m_context.n - 1; ++j)
     {
 
         // TODO optimize this
@@ -201,33 +199,33 @@ void ODESolver::ai()
 
         Result.emplace_back(t, x);
 
-        t += Context::h;
+        t += m_context.h;
     }
 
     // Run Adams method
 
     // Create n initial values of f
-    std::vector<std::vector<double>> fs(Context::n - 1);
+    std::vector<std::vector<double>> fs(m_context.n - 1);
     for (uint32_t i = 0; i < Result.size(); ++i)
     {
         uint32_t index = Result.size() - 1 - i;
-        fs.at(i) = Context::f(
+        fs.at(i) = m_context.f(
                 std::get<0>(Result.at(index)),
                 std::get<1>(Result.at(index))
         );
     }
 
-    while (t < Context::t_end)
+    while (t < m_context.t_end)
     {
 
         std::function<std::vector<double>(std::vector<double>)> f =
                 [&fs, t, this, &x](std::vector<double> y) -> std::vector<double>
                 {
-                    std::vector<double> res = Context::f(t, y);
+                    std::vector<double> res = m_context.f(t, y);
 
                     for (double &re: res)
                     {
-                        re *= B.at(Context::n - 1);
+                        re *= B.at(m_context.n - 1);
                     }
 
                     for (uint32_t j = 0; j < fs.size(); ++j)
@@ -240,7 +238,7 @@ void ODESolver::ai()
 
                     for (double &re: res)
                     {
-                        re *= Context::h;
+                        re *= m_context.h;
                     }
 
                     for (uint32_t i = 0; i < res.size(); ++i)
@@ -251,26 +249,26 @@ void ODESolver::ai()
                     return res;
                 };
 
-        x = newton::solve_newton(f, x, 1000);
+        x = m_newton_solver.solve_newton(f, x, 1000);
         Result.emplace_back(t, x);
 
-        t += Context::h;
+        t += m_context.h;
 
         for (uint32_t i = 0; i < fs.size() - 1; ++i)
         {
             fs.at(i) = std::move(fs.at(i + 1));
         }
 
-        fs.at(fs.size() - 1) = Context::f(t, x);
+        fs.at(fs.size() - 1) = m_context.f(t, x);
     }
 }
 
 void ODESolver::computeA()
 {
     //TODO optimize this
-    for (int32_t j = 0; j < (int32_t) Context::n; ++j)
+    for (int32_t j = 0; j < (int32_t) m_context.n; ++j)
     {
-        A.at(j) = pow(-1.0, j) / (factorial(j) * factorial((int32_t) Context::n - 1 - j));
+        A.at(j) = pow(-1.0, j) / (factorial(j) * factorial((int32_t) m_context.n - 1 - j));
 
         A.at(j) *= integrate(integrandForA, j);
     }
@@ -279,9 +277,9 @@ void ODESolver::computeA()
 void ODESolver::computeB()
 {
     //TODO optimize this
-    for (int32_t j = -1; j < (int32_t) Context::n - 1; ++j)
+    for (int32_t j = -1; j < (int32_t) m_context.n - 1; ++j)
     {
-        B.at(j + 1) = pow(-1.0, j + 1) / (factorial(j + 1) * factorial((int32_t) Context::n - 2 - j));
+        B.at(j + 1) = pow(-1.0, j + 1) / (factorial(j + 1) * factorial((int32_t) m_context.n - 2 - j));
 
         B.at(j + 1) *= integrate(integrandForB, j);
     }
@@ -299,9 +297,9 @@ int32_t ODESolver::factorial(int32_t x)
     return res;
 }
 
-double ODESolver::integrate(double (*integrand)(int32_t, double), int32_t j)
+double ODESolver::integrate(std::function<double(int32_t j, double z)>& integrand, int32_t j) const
 {
-    auto n = (int32_t) Context::in;
+    auto n = (int32_t) m_context.in;
     double res = 0;
 
     for (int32_t i = 0; i < n; ++i)
@@ -312,34 +310,8 @@ double ODESolver::integrate(double (*integrand)(int32_t, double), int32_t j)
     return res;
 }
 
-double ODESolver::integrandForA(int32_t j, double z)
+ODESolver::ODESolver(Context context)
 {
-    double res = 1;
-
-    for (int32_t i = 0; i < (int32_t) Context::n; ++i)
-    {
-        if (i == j)
-        {
-            continue;
-        }
-        res *= z + i;
-    }
-
-    return res;
-}
-
-double ODESolver::integrandForB(int32_t j, double z)
-{
-    double res = 1;
-
-    for (int32_t i = -1; i < (int32_t) Context::n - 1; ++i)
-    {
-        if (i == j)
-        {
-            continue;
-        }
-        res *= z + i;
-    }
-
-    return res;
+    m_context = std::move(context);
+    m_newton_solver = NewtonSolver(m_context);
 }

@@ -10,15 +10,24 @@
 
 #include "Algebra.h"
 #include "Context.h"
+
 using namespace algebra;
 
-namespace newton{
-    typedef std::function<std::vector<double>(std::vector<double>)> function;
+class NewtonSolver{
+public:
+    NewtonSolver();
+    explicit NewtonSolver(Context context);
 
     /**
-     * Returns
+     * Solves system of non-linear equations f(x) = 0 using Newton's method
+     * @return vector of results
      */
-    double residual(const vector &a, const vector &b);
+    vector solve_newton(std::function<std::vector<double>(std::vector<double>)>& f,
+                        const vector &initial_guess, uint32_t max_iterations);
+private:
+    Context m_context;
+
+    static double residual(const vector &a, const vector &b);
 
     /**
      * Computes derivative (Jordan matrix)
@@ -26,21 +35,14 @@ namespace newton{
      * @param f function to derive
      * @param x point in witch to compute derivative
      */
-    void derive(matrix &m, const function& f, const vector &x);
+    void derive(matrix &m, std::function<std::vector<double>(std::vector<double>)>& f, const vector &x) const;
 
     /**
      * Solves linear equation system
      * @param mx matrix with left and right parts of the system
      * @param res vector of results
      */
-    void solve(matrix &mx, vector &res);
-
-    /**
-     * Solves system of non-linear equations f(x) = 0 using Newton's method
-     * @return vector of results
-     */
-    vector solve_newton(const function& f,
-                        const vector &initial_guess, uint32_t max_iterations);
-}
+    static void solve(matrix &mx, vector &res);
+};
 
 #endif //NUMERICAL_TASK_9_NEWTONSOLVER_H

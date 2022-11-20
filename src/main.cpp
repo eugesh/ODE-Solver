@@ -6,7 +6,19 @@
 
 int main()
 {
-    ODESolver odeSolver = ODESolver();
+    // Creating function, Context with function and creating ODESolver with Context
+    std::function<std::vector<double>(double t, std::vector<double> x)> f =
+            [](double t, std::vector<double> x) -> std::vector<double>{
+        for(auto & item : x){
+            item = 3.0 * pow(item * item, 0.333);
+        }
+
+        return x;
+    };
+
+    Context context = Context(f);
+    context.n = 5;
+    ODESolver odeSolver = ODESolver(Context());
 
     // rk
 
