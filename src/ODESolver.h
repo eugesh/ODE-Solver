@@ -14,7 +14,7 @@
 class ODESolver
 {
 public:
-    explicit ODESolver(Context context);
+    explicit ODESolver(const Context& context);
 
     /**
      * Runge–Kutta 4 integrator
@@ -55,12 +55,12 @@ private:
     /**
      * Coefficients Anj for Adams extrapolation method
      */
-    std::vector<double> A = std::vector<double>(m_context.n);
+    std::vector<double> A;
 
     /**
      * Coefficients Bnj for Adams interpolation method
      */
-    std::vector<double> B = std::vector<double>(m_context.n);
+    std::vector<double> B;
 
     /**
      * Factorial

@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <functional>
 #include <utility>
+#include <iostream>
 
 void ODESolver::rk()
 {
@@ -265,6 +266,8 @@ void ODESolver::ai()
 
 void ODESolver::computeA()
 {
+    A = std::vector<double>(m_context.n);
+
     //TODO optimize this
     for (int32_t j = 0; j < (int32_t) m_context.n; ++j)
     {
@@ -276,6 +279,8 @@ void ODESolver::computeA()
 
 void ODESolver::computeB()
 {
+    B = std::vector<double>(m_context.n);
+
     //TODO optimize this
     for (int32_t j = -1; j < (int32_t) m_context.n - 1; ++j)
     {
@@ -310,8 +315,8 @@ double ODESolver::integrate(std::function<double(int32_t j, double z)>& integran
     return res;
 }
 
-ODESolver::ODESolver(Context context)
+ODESolver::ODESolver(const Context& context)
 {
-    m_context = std::move(context);
-    m_newton_solver = NewtonSolver(m_context);
+    m_context = context;
+    m_newton_solver = NewtonSolver(context);
 }

@@ -16,7 +16,7 @@ using namespace algebra;
 class NewtonSolver{
 public:
     NewtonSolver();
-    explicit NewtonSolver(Context context);
+    explicit NewtonSolver(const Context& context);
 
     /**
      * Solves system of non-linear equations f(x) = 0 using Newton's method

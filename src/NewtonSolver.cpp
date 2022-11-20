@@ -7,9 +7,9 @@
 #include <cmath>
 #include <utility>
 
-NewtonSolver::NewtonSolver(Context context)
+NewtonSolver::NewtonSolver(const Context& context)
 {
-    m_context = std::move(context);
+    m_context = context;
 }
 
 std::vector<double> NewtonSolver::solve_newton(std::function<std::vector<double>(std::vector<double>)> &f,
