@@ -9,15 +9,20 @@ int main()
     // Creating function, Context with function and creating ODESolver with Context
     std::function<std::vector<double>(double t, std::vector<double> x)> f =
             [](double t, std::vector<double> x) -> std::vector<double>{
-        for(auto & item : x){
-            item = 3.0 * pow(item * item, 0.333);
-        }
+        std::vector<double> res(x.size());
 
-        return x;
+        res.at(0) = x.at(0) - 7 + x.at(1);
+        res.at(1) = sin(x.at(0) * x.at(1));
+        res.at(2) = t * x.at(2);
+
+        return res;
     };
 
     Context context = Context(f);
+    context.x_0 = {0, 1, 1, 1};
     context.n = 5;
+    context.h = 10e-5;
+    context.t_end = 4;
     ODESolver odeSolver = ODESolver(context);
 
     // rk

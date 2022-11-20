@@ -123,7 +123,7 @@ void NewtonSolver::solve(matrix &mx, vector &res)
 
         for (size_type i = j + 1; i < n; i++)
         {
-            double div = mx.at(i).at(j) / mx.at(j).at(i);
+            double div = mx.at(i).at(j) / mx.at(j).at(j);
 
             for (size_type k = 0; k < n + 1; k++)
             {

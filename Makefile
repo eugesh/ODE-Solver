@@ -9,7 +9,7 @@ SRC=$(wildcard src/*.cpp src/*.h)
 plot: $(wildcard plot.plt) run
 	gnuplot plot.plt
 
-run: build $(wildcard data.dat)
+run: build
 	./$(EXEC_NAME)
 
 build: $(SRC)
