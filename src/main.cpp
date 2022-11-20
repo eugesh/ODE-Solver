@@ -18,7 +18,7 @@ int main()
 
     Context context = Context(f);
     context.n = 5;
-    ODESolver odeSolver = ODESolver(Context());
+    ODESolver odeSolver = ODESolver(context);
 
     // rk
 
