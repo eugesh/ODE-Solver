@@ -92,7 +92,7 @@ private:
     };
 
     /**
-     * Integrand for Adams method (ea)
+     * Integrand for Adams method (ia)
      */
     std::function<double(int32_t j, double z)> integrandForB = [this](int32_t j, double z) -> double{
         double res = 1;

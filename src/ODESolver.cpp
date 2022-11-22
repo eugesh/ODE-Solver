@@ -155,7 +155,7 @@ void ODESolver::ae()
         {
             for (uint32_t i = 0; i < x.size(); ++i)
             {
-                x.at(i) += A.at(j) * fs.at(j).at(i) * m_context.h;
+                x.at(i) += A.at(m_context.n - 1 -j) * fs.at(j).at(i) * m_context.h;
             }
         }
 
@@ -226,14 +226,14 @@ void ODESolver::ai()
 
                     for (double &re: res)
                     {
-                        re *= B.at(m_context.n - 1);
+                        re *= B.at(0);
                     }
 
                     for (uint32_t j = 0; j < fs.size(); ++j)
                     {
                         for (uint32_t i = 0; i < res.size(); ++i)
                         {
-                            res.at(i) += B.at(j) * fs.at(j).at(i);
+                            res.at(i) += B.at(m_context.n - 1 - j) * fs.at(j).at(i);
                         }
                     }
 

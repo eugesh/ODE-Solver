@@ -4,6 +4,10 @@
 
 #include "ODESolver.h"
 
+void run_rk(Context &context);
+void run_ae(Context &context);
+void run_ai(Context &context);
+
 int main()
 {
     // Creating function, Context with function and creating ODESolver with Context
@@ -11,21 +15,32 @@ int main()
             [](double t, std::vector<double> x) -> std::vector<double>{
         std::vector<double> res(x.size());
 
-        res.at(0) = sin(x.at(0) / x.at(1));
-        res.at(1) = x.at(0) / x.at(2) + t;
-        res.at(2) = exp(x.at(1) - x.at(2));
+        res.at(0)=10.0*(x.at(1)-x.at(0));
+        res.at(1)=x.at(0)*(28.0-x.at(2))-x.at(1);
+        res.at(2)=x.at(0)*x.at(1)-8.0*x.at(2)/3.0;
 
         return res;
     };
 
     Context context = Context(f);
-    context.x_0 = {-6, 1, 5, 5};
-    context.n = 5;
+    context.x_0 = {0, 10, 10, 10};
+    context.n = 10;
     context.h = 10e-5;
-    context.t_end = 6;
-    ODESolver odeSolver = ODESolver(context);
+    context.in = 1000000;
+    context.newton_derive_step = 10e-6;
+    context.newton_precision = 10e-6;
+    context.t_end = 50;
 
-    // rk
+    // Run calculation
+    run_rk(context);
+    run_ae(context);
+    run_ai(context);
+
+    return 0;
+}
+
+void run_rk(Context &context){
+    ODESolver odeSolver = ODESolver(context);
 
     odeSolver.rk();
 
@@ -46,8 +61,10 @@ int main()
     }
 
     rk.close();
+}
 
-    // ae
+void run_ae(Context &context){
+    ODESolver odeSolver = ODESolver(context);
 
     odeSolver.ae();
 
@@ -68,8 +85,10 @@ int main()
     }
 
     ae.close();
+}
 
-    // ai
+void run_ai(Context &context){
+    ODESolver odeSolver = ODESolver(context);
 
     odeSolver.ai();
 
@@ -90,6 +109,4 @@ int main()
     }
 
     ai.close();
-
-    return 0;
 }

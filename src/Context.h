@@ -20,7 +20,7 @@ public:
      */
     std::function<std::vector<double>(double t, std::vector<double> x)> f;
     /**
-     * Vector of initial values
+     * Vector of initial values. For system of n equations n+1 initial values (first - time)
      */
     std::vector<double> x_0 = {-1, -10};
     /**
