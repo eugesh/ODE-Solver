@@ -88,7 +88,7 @@ void NewtonSolver::solve(std::vector<std::vector<double>> &mx, std::vector<doubl
 
     for (size_type i = 0; i < n; i++)
     {
-        x_order.at(i) = i;
+        x_order[i] = i;
     }
 
     for (size_type j = 0; j < n; j++)
@@ -103,9 +103,9 @@ void NewtonSolver::solve(std::vector<std::vector<double>> &mx, std::vector<doubl
         {
             for (size_type t = j; t < n; t++)
             {
-                if (fabs(mx.at(z).at(t)) > max)
+                if (fabs(mx[z][t]) > max)
                 {
-                    max = fabs(mx.at(z).at(t));
+                    max = fabs(mx[z][t]);
                     max_i = z;
                     max_j = t;
                 }
@@ -114,50 +114,48 @@ void NewtonSolver::solve(std::vector<std::vector<double>> &mx, std::vector<doubl
 
         for (size_type i = 0; i < n; i++)
         {
-            std::swap(mx.at(i).at(max_j), mx.at(i).at(j));
+            std::swap(mx[i][max_j], mx[i][j]);
         }
-        std::swap(mx.at(max_i), mx.at(j));
-        std::swap(x_order.at(j), x_order.at(max_j));
+        std::swap(mx[max_i], mx[j]);
+        std::swap(x_order[j], x_order[max_j]);
 
         ////////////////////////////////////////////////
 
         for (size_type i = j + 1; i < n; i++)
         {
-            double div = mx.at(i).at(j) / mx.at(j).at(j);
+            double div = mx[i][j] / mx[j][j];
 
             for (size_type k = 0; k < n + 1; k++)
             {
-                mx.at(i).at(k) = mx.at(i).at(k) - div * mx.at(j).at(k);
+                mx[i][k] = mx[i][k] - div * mx[j][k];
             }
         }
     }
 
-    res.at(n - 1) = mx.at(n - 1).at(n) / mx.at(n - 1).at(n - 1);
+    res[n - 1] = mx[n - 1][n] / mx[n - 1][n - 1];
 
-    for (int i = (int) n - 2; i >= 0; i--)
+    for (int i = (int)n - 2; i >= 0; i--)
     {
         double sum = 0;
-        for (int j = i + 1; j < (int) n; j++)
+        for (int j = i + 1; j < (int)n; j++)
         {
-            sum = sum + mx.at(i).at(j) * res.at(j);
+            sum = sum + mx[i][j] * res[j];
         }
-        res.at(i) = (mx.at(i).at(n) - sum) / mx.at(i).at(i);
+        res[i] = (mx[i][n] - sum) / mx[i][i];
     }
 
     // Restore the order of res //
 
-    for (size_type i = 0; i < n; i++)
-    {
+    for (size_type i = 0; i < n; i++) {
         size_type next = i;
 
-        while (x_order.at(next) != n)
-        {
+        while (x_order[next] != n) {
 
-            std::swap(res.at(i), res.at(x_order.at(next)));
+            std::swap(res[i], res[x_order[next]]);
 
-            size_type temp = x_order.at(next);
+            size_type temp = x_order[next];
 
-            x_order.at(next) = n;
+            x_order[next] = n;
             next = temp;
         }
     }
