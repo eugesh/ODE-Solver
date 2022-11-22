@@ -216,40 +216,39 @@ void ODESolver::ai()
         );
     }
 
-    while (t < m_context.t_end)
-    {
+    std::function<std::vector<double>(std::vector<double>)> f =
+            [&fs, &t, this, &x](std::vector<double> y) -> std::vector<double>
+            {
+                std::vector<double> res = m_context.f(t, y);
 
-        std::function<std::vector<double>(std::vector<double>)> f =
-                [&fs, t, this, &x](std::vector<double> y) -> std::vector<double>
+                for (double &re: res)
                 {
-                    std::vector<double> res = m_context.f(t, y);
+                    re *= B[0];
+                }
 
-                    for (double &re: res)
-                    {
-                        re *= B[0];
-                    }
-
-                    for (uint32_t j = 0; j < fs.size(); ++j)
-                    {
-                        for (uint32_t i = 0; i < res.size(); ++i)
-                        {
-                            res[i] += B[m_context.n - 1 - j] * fs[j][i];
-                        }
-                    }
-
-                    for (double &re: res)
-                    {
-                        re *= m_context.h;
-                    }
-
+                for (uint32_t j = 0; j < fs.size(); ++j)
+                {
                     for (uint32_t i = 0; i < res.size(); ++i)
                     {
-                        res[i] += x[i] - y[i];
+                        res[i] += B[m_context.n - 1 - j] * fs[j][i];
                     }
+                }
 
-                    return res;
-                };
+                for (double &re: res)
+                {
+                    re *= m_context.h;
+                }
 
+                for (uint32_t i = 0; i < res.size(); ++i)
+                {
+                    res[i] += x[i] - y[i];
+                }
+
+                return res;
+            };
+
+    while (t < m_context.t_end)
+    {
         x = m_newton_solver.solve_newton(f, x, m_context.newton_max_iterations);
         Result.emplace_back(t, x);
 

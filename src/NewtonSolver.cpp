@@ -17,32 +17,30 @@ std::vector<double> NewtonSolver::solve_newton(std::function<std::vector<double>
 {
     size_type n = initial_guess.size();
 
-    std::vector<double> previous = initial_guess;
-    std::vector<double> next(n);
+    std::vector<double> tmp = initial_guess;
+    std::vector<double> output(n);
+
+    // n by n + 1 matrix: (derivatives | derivatives * previous - f(previous))
+    std::vector<std::vector<double>> m;
+    create(m, n, n + 1);
 
     for (uint32_t i = 0; i < max_iterations; ++i)
     {
-        // n by n + 1 matrix: (derivatives | derivatives * previous - f(previous))
-        std::vector<std::vector<double>> m;
-        create(m, n, n + 1);
-
         // Find all derivatives (last column stay intact)
-        derive(m, f, previous);
+        derive(m, f, tmp);
 
         // Find right part and put into m (compute last column)
-        plug_vector(m, subtract(multiply(m, previous), f(previous)));
+        plug_vector(m, subtract(multiply(m, tmp), f(tmp)));
 
-        solve(m, next);
+        solve(m, output);
 
-        if (residual(previous, next) < m_context.newton_precision)
+        if (residual(tmp, output) < m_context.newton_precision)
         {
             break;
         }
 
-        std::swap(next, previous);
+        std::swap(output, tmp);
     }
-
-    std::vector<double> output = next;
 
     return output;
 }

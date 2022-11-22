@@ -16,9 +16,9 @@ int main()
             [](double t, std::vector<double> x) -> std::vector<double>{
         std::vector<double> res(x.size());
 
-        res.at(0)=10.0*(x.at(1)-x.at(0));
-        res.at(1)=x.at(0)*(28.0-x.at(2))-x.at(1);
-        res.at(2)=x.at(0)*x.at(1)-8.0*x.at(2)/3.0;
+        res[0]=10.0*(x[1]-x[0]);
+        res[1]=x[0]*(28.0-x[2])-x[1];
+        res[2]=x[0]*x[1]-8.0*x[2]/3.0;
 
         return res;
     };
