@@ -38,10 +38,11 @@ public:
     /**
      * Number of integration steps in calculating Anj and Bnj for Adams methods
      */
-    uint32_t in = 1000;
+    uint32_t in = 100000;
 
-    double newton_derive_step = 10e-5;
-    double newton_precision = 10e-5;
+    double newton_derive_step = 10e-8;
+    double newton_precision = 10e-8;
+    uint32_t newton_max_iterations = 1000;
 };
 
 #endif //NUMERICAL_TASK_9_CONTEXT_H

@@ -250,7 +250,7 @@ void ODESolver::ai()
                     return res;
                 };
 
-        x = m_newton_solver.solve_newton(f, x, 1000);
+        x = m_newton_solver.solve_newton(f, x, m_context.newton_max_iterations);
         Result.emplace_back(t, x);
 
         t += m_context.h;
