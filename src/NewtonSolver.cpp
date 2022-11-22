@@ -37,6 +37,7 @@ std::vector<double> NewtonSolver::solve_newton(std::function<std::vector<double>
         // Find right part and put into m (compute last column)
         plug_vector(m, subtract(multiply(m, tmp), f(tmp)));
 
+        // Solve system of linear equations
         solve(m, output);
 
         if (residual(tmp, output) < m_context.newton_precision)
@@ -100,7 +101,7 @@ void NewtonSolver::solve(std::vector<std::vector<double>> &mx, std::vector<doubl
 
     for (size_type j = 0; j < n; j++)
     {
-        // Serch for biggest element and change order //
+        // Search for biggest element and change order //
 
         size_type max_i = 0;
         size_type max_j = 0;
