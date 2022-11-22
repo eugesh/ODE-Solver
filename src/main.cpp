@@ -1,12 +1,13 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <thread>
 
 #include "ODESolver.h"
 
-void run_rk(Context &context);
-void run_ae(Context &context);
-void run_ai(Context &context);
+void run_rk(const Context &context);
+void run_ae(const Context &context);
+void run_ai(const Context &context);
 
 int main()
 {
@@ -25,21 +26,25 @@ int main()
     Context context = Context(f);
     context.x_0 = {0, 10, 10, 10};
     context.n = 10;
-    context.h = 10e-5;
+    context.h = 10e-6;
     context.in = 1000000;
     context.newton_derive_step = 10e-6;
     context.newton_precision = 10e-6;
     context.t_end = 50;
 
     // Run calculation
-    run_rk(context);
-    run_ae(context);
-    run_ai(context);
+    std::thread rk(run_rk, context);
+    std::thread ae(run_ae, context);
+    std::thread ai(run_ai, context);
+
+    rk.join();
+    ae.join();
+    ai.join();
 
     return 0;
 }
 
-void run_rk(Context &context){
+void run_rk(const Context &context){
     ODESolver odeSolver = ODESolver(context);
 
     odeSolver.rk();
@@ -63,7 +68,7 @@ void run_rk(Context &context){
     rk.close();
 }
 
-void run_ae(Context &context){
+void run_ae(const Context &context){
     ODESolver odeSolver = ODESolver(context);
 
     odeSolver.ae();
@@ -87,7 +92,7 @@ void run_ae(Context &context){
     ae.close();
 }
 
-void run_ai(Context &context){
+void run_ai(const Context &context){
     ODESolver odeSolver = ODESolver(context);
 
     odeSolver.ai();
