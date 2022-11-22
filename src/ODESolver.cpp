@@ -226,14 +226,14 @@ void ODESolver::ai()
 
                     for (double &re: res)
                     {
-                        re *= B.at(0);
+                        re *= B[0];
                     }
 
                     for (uint32_t j = 0; j < fs.size(); ++j)
                     {
                         for (uint32_t i = 0; i < res.size(); ++i)
                         {
-                            res.at(i) += B.at(m_context.n - 1 - j) * fs.at(j).at(i);
+                            res[i] += B[m_context.n - 1 - j] * fs[j][i];
                         }
                     }
 
@@ -244,7 +244,7 @@ void ODESolver::ai()
 
                     for (uint32_t i = 0; i < res.size(); ++i)
                     {
-                        res.at(i) += x.at(i) - y.at(i);
+                        res[i] += x[i] - y[i];
                     }
 
                     return res;

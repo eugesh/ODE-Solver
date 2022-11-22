@@ -65,10 +65,11 @@ void NewtonSolver::derive(std::vector<std::vector<double>> &m, std::function<std
 {
     size_type n = m.size();
 
+    std::vector<double> l = x;
+    std::vector<double> r = x;
+
     for (size_type column = 0; column < n; ++column)
     {
-        std::vector<double> l = x;
-        std::vector<double> r = x;
         l[column] += m_context.newton_derive_step;
         r[column] -= m_context.newton_derive_step;
 
@@ -78,6 +79,9 @@ void NewtonSolver::derive(std::vector<std::vector<double>> &m, std::function<std
         {
             m[row][column] = d[row];
         }
+
+        l[column] -= m_context.newton_derive_step;
+        r[column] += m_context.newton_derive_step;
     }
 }
 
