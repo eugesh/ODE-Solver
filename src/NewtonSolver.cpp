@@ -10,6 +10,15 @@
 NewtonSolver::NewtonSolver(const Context& context)
 {
     m_context = context;
+
+    // Create matrix of derivatives
+    size_type n = context.x_0.size() - 1;
+
+    m = std::vector<std::vector<double>>(n);
+    for (auto &item: m)
+    {
+        item = std::vector<double>(n + 1);
+    }
 }
 
 std::vector<double> NewtonSolver::solve_newton(std::function<std::vector<double>(std::vector<double>)> &f,
@@ -20,14 +29,10 @@ std::vector<double> NewtonSolver::solve_newton(std::function<std::vector<double>
     std::vector<double> tmp = initial_guess;
     std::vector<double> output(n);
 
-    // n by n + 1 matrix: (derivatives | derivatives * previous - f(previous))
-    std::vector<std::vector<double>> m;
-    create(m, n, n + 1);
-
     for (uint32_t i = 0; i < max_iterations; ++i)
     {
         // Find all derivatives (last column stay intact)
-        derive(m, f, tmp);
+        derive(f, tmp);
 
         // Find right part and put into m (compute last column)
         plug_vector(m, subtract(multiply(m, tmp), f(tmp)));
@@ -59,7 +64,7 @@ double NewtonSolver::residual(const std::vector<double> &a, const std::vector<do
     return res;
 }
 
-void NewtonSolver::derive(std::vector<std::vector<double>> &m, std::function<std::vector<double>(std::vector<double>)> &f, const std::vector<double> &x) const
+void NewtonSolver::derive(std::function<std::vector<double>(std::vector<double>)> &f, const std::vector<double> &x)
 {
     size_type n = m.size();
 
@@ -166,4 +171,13 @@ void NewtonSolver::solve(std::vector<std::vector<double>> &mx, std::vector<doubl
 NewtonSolver::NewtonSolver()
 {
     m_context = Context();
+
+    // Create matrix of derivatives
+    size_type n = m_context.x_0.size() - 1;
+
+    m = std::vector<std::vector<double>>(n);
+    for (auto &item: m)
+    {
+        item = std::vector<double>(n + 1);
+    }
 }

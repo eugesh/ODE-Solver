@@ -5,17 +5,6 @@
 #include "Algebra.h"
 
 namespace algebra{
-    void create(std::vector<std::vector<double>> &m, size_type height, size_type with)
-    {
-        m = std::vector<std::vector<double>>(height);
-
-        for (auto &item: m)
-        {
-
-            item = std::vector<double>(with);
-        }
-    }
-
     std::vector<double> multiply(const std::vector<std::vector<double>> &m, const std::vector<double> &x)
     {
         size_type n = m.size();

@@ -15,8 +15,8 @@ using namespace algebra;
 
 class NewtonSolver{
 public:
-    NewtonSolver();
     explicit NewtonSolver(const Context& context);
+    NewtonSolver();
 
     /**
      * Solves system of non-linear equations f(x) = 0 using Newton's method
@@ -35,7 +35,7 @@ private:
      * @param f function to derive
      * @param x point in witch to compute derivative
      */
-    void derive(std::vector<std::vector<double>> &m, std::function<std::vector<double>(std::vector<double>)>& f, const std::vector<double> &x) const;
+    void derive(std::function<std::vector<double>(std::vector<double>)>& f, const std::vector<double> &x);
 
     /**
      * Solves linear equation system
@@ -43,6 +43,11 @@ private:
      * @param res vector of results
      */
     static void solve(std::vector<std::vector<double>> &mx, std::vector<double> &res);
+
+    /**
+     * Matrix of derivatives n by n + 1: (derivatives | derivatives * previous - f(previous))
+     */
+    std::vector<std::vector<double>> m;
 };
 
 #endif //NUMERICAL_TASK_9_NEWTONSOLVER_H
