@@ -5,21 +5,21 @@
 #include "Algebra.h"
 
 namespace algebra{
-    void create(matrix &m, size_type height, size_type with)
+    void create(std::vector<std::vector<double>> &m, size_type height, size_type with)
     {
-        m = matrix(height);
+        m = std::vector<std::vector<double>>(height);
 
         for (auto &item: m)
         {
 
-            item = vector(with);
+            item = std::vector<double>(with);
         }
     }
 
-    vector multiply(const matrix &m, const vector &x)
+    std::vector<double> multiply(const std::vector<std::vector<double>> &m, const std::vector<double> &x)
     {
         size_type n = m.size();
-        vector result = vector(n);
+        std::vector<double> result(n);
 
         for (size_type i = 0; i < n; ++i)
         {
@@ -32,10 +32,10 @@ namespace algebra{
         return result;
     }
 
-    vector subtract(const vector &a, const vector &b)
+    std::vector<double> subtract(const std::vector<double> &a, const std::vector<double> &b)
     {
         size_type n = a.size();
-        vector result = vector(n);
+        std::vector<double> result(n);
 
         for (size_type i = 0; i < n; ++i)
         {
@@ -45,10 +45,10 @@ namespace algebra{
         return result;
     }
 
-    vector divide(const vector &a, double value)
+    std::vector<double> divide(const std::vector<double> &a, double value)
     {
         size_type n = a.size();
-        vector result = vector(n);
+        std::vector<double> result(n);
 
         for (size_type i = 0; i < n; ++i)
         {
@@ -58,7 +58,7 @@ namespace algebra{
         return result;
     }
 
-    void plug_vector(matrix &m, const vector &x)
+    void plug_vector(std::vector<std::vector<double>> &m, const std::vector<double> &x)
     {
         size_type n = m.size();
 

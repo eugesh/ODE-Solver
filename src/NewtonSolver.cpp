@@ -13,17 +13,17 @@ NewtonSolver::NewtonSolver(const Context& context)
 }
 
 std::vector<double> NewtonSolver::solve_newton(std::function<std::vector<double>(std::vector<double>)> &f,
-                                               const vector &initial_guess, uint32_t max_iterations)
+                                               const std::vector<double> &initial_guess, uint32_t max_iterations)
 {
     size_type n = initial_guess.size();
 
-    vector previous = initial_guess;
-    vector next = vector(n);
+    std::vector<double> previous = initial_guess;
+    std::vector<double> next(n);
 
     for (uint32_t i = 0; i < max_iterations; ++i)
     {
         // n by n + 1 matrix: (derivatives | derivatives * previous - f(previous))
-        matrix m;
+        std::vector<std::vector<double>> m;
         create(m, n, n + 1);
 
         // Find all derivatives (last column stay intact)
@@ -42,13 +42,13 @@ std::vector<double> NewtonSolver::solve_newton(std::function<std::vector<double>
         std::swap(next, previous);
     }
 
-    vector output = next;
+    std::vector<double> output = next;
 
     return output;
 }
 
 
-double NewtonSolver::residual(const vector &a, const vector &b)
+double NewtonSolver::residual(const std::vector<double> &a, const std::vector<double> &b)
 {
     double res = 0;
     size_type n = a.size();
@@ -61,18 +61,18 @@ double NewtonSolver::residual(const vector &a, const vector &b)
     return res;
 }
 
-void NewtonSolver::derive(matrix &m, std::function<std::vector<double>(std::vector<double>)> &f, const vector &x) const
+void NewtonSolver::derive(std::vector<std::vector<double>> &m, std::function<std::vector<double>(std::vector<double>)> &f, const std::vector<double> &x) const
 {
     size_type n = m.size();
 
     for (size_type column = 0; column < n; ++column)
     {
-        vector l = x;
-        vector r = x;
+        std::vector<double> l = x;
+        std::vector<double> r = x;
         l[column] += m_context.newton_derive_step;
         r[column] -= m_context.newton_derive_step;
 
-        vector d = divide(subtract(f(l), f(r)), 2 * m_context.newton_derive_step);
+        std::vector<double> d = divide(subtract(f(l), f(r)), 2 * m_context.newton_derive_step);
 
         for (size_type row = 0; row < n; ++row)
         {
@@ -81,10 +81,10 @@ void NewtonSolver::derive(matrix &m, std::function<std::vector<double>(std::vect
     }
 }
 
-void NewtonSolver::solve(matrix &mx, vector &res)
+void NewtonSolver::solve(std::vector<std::vector<double>> &mx, std::vector<double> &res)
 {
     size_type n = mx.size();
-    vector_int x_order = vector_int(n);
+    std::vector<size_type> x_order(n);
 
     for (size_type i = 0; i < n; i++)
     {

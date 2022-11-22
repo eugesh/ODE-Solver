@@ -28,8 +28,8 @@ int main()
     context.n = 10;
     context.h = 10e-6;
     context.in = 1000000;
-    context.newton_derive_step = 10e-6;
-    context.newton_precision = 10e-6;
+    context.newton_derive_step = 10e-9;
+    context.newton_precision = 10e-9;
     context.t_end = 50;
 
     // Run calculation
