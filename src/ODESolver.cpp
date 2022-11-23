@@ -13,10 +13,9 @@
 void ODESolver::rk()
 {
     Result.clear();
-    double t = m_context.x_0.at(0); // Get t_0 from x_0
-    std::vector<double> x = m_context.x_0;
 
-    x.erase(x.begin()); // Remove t_0 from x_0
+    double t = m_context.t_begin;
+    std::vector<double> x = m_context.x_0;
 
     while (t < m_context.t_end)
     {
@@ -107,10 +106,9 @@ std::vector<double> ODESolver::k4(double t, std::vector<double> x, std::vector<d
 void ODESolver::ae()
 {
     Result.clear();
-    double t = m_context.x_0.at(0); // Get t_0 from x_0
-    std::vector<double> x = m_context.x_0;
 
-    x.erase(x.begin()); // Remove t_0 from x_0
+    double t = m_context.t_begin;
+    std::vector<double> x = m_context.x_0;
 
     computeA();
 
@@ -175,10 +173,9 @@ void ODESolver::ae()
 void ODESolver::ai()
 {
     Result.clear();
-    double t = m_context.x_0.at(0); // Get t_0 from x_0
-    std::vector<double> x = m_context.x_0;
 
-    x.erase(x.begin()); // Remove t_0 from x_0
+    double t = m_context.t_begin;
+    std::vector<double> x = m_context.x_0;
 
     computeB();
 

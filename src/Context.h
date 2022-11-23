@@ -10,23 +10,30 @@
 #include <functional>
 #include <cmath>
 
-class Context{
+class Context
+{
 public:
     explicit Context(std::function<std::vector<double>(double t, std::vector<double> x)> &f);
+
     Context();
+
     /**
      * Right part of ODE x' = f(t, x)
      * @return x'
      */
     std::function<std::vector<double>(double t, std::vector<double> x)> f;
     /**
-     * Vector of initial values. For system of n equations n+1 initial values (first - time)
+     * Vector of initial values. For system of n equations n initial values
      */
-    std::vector<double> x_0 = {-1, -10};
+    std::vector<double> x_0 = {-10};
     /**
      * RK integration step
      */
     double h = 10e-5;
+    /**
+     * Begin of an integrating
+     */
+    double t_begin = 0.0;
     /**
      * End of a integrating
      */

@@ -12,7 +12,7 @@ NewtonSolver::NewtonSolver(const Context& context)
     m_context = context;
 
     // Create matrix of derivatives
-    size_type n = context.x_0.size() - 1;
+    size_type n = context.x_0.size();
 
     m = std::vector<std::vector<double>>(n);
     for (auto &item: m)
@@ -174,7 +174,7 @@ NewtonSolver::NewtonSolver()
     m_context = Context();
 
     // Create matrix of derivatives
-    size_type n = m_context.x_0.size() - 1;
+    size_type n = m_context.x_0.size();
 
     m = std::vector<std::vector<double>>(n);
     for (auto &item: m)

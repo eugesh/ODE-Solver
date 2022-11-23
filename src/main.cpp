@@ -24,7 +24,7 @@ int main()
     };
 
     Context context = Context(f);
-    context.x_0 = {0, 10, 10, 10};
+    context.x_0 = {10, 10, 10};
     context.n = 10;
     context.h = 5e-5;
     context.t_end = 50;
