@@ -278,9 +278,10 @@ double ODESolver::integrate(std::function<double(int32_t j, double z)>& integran
 ODESolver::ODESolver(const Context& context)
 {
     m_context = context;
-    m_newton_solver = NewtonSolver(context);
-    dim = context.x_0.size();
+    m_newton_solver = NewtonSolver(m_context);
     m_utils = Utils(m_context);
+
+    dim = context.x_0.size();
 }
 
 void ODESolver::ComputeInitialAE(double &t, std::vector<double> &x)

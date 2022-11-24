@@ -11,8 +11,8 @@
 class Utils
 {
 public:
-    explicit Utils(Context &context);
-    Utils();
+    explicit Utils(const Context &context);
+    Utils() = delete;
 
     /**
      * Computes derivative (Jordan matrix)

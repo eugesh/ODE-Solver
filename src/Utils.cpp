@@ -4,7 +4,7 @@
 
 #include "Utils.h"
 
-Utils::Utils(Context &context)
+Utils::Utils(const Context &context)
 {
     m_context = context;
 }
@@ -33,9 +33,3 @@ void Utils::derive(std::vector<std::vector<double>> &mx, std::function<std::vect
         r[column] += m_context.newton_derive_step;
     }
 }
-
-Utils::Utils()
-{
-    m_context = Context();
-}
-

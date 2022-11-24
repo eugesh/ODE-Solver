@@ -16,6 +16,8 @@ class ODESolver
 public:
     explicit ODESolver(const Context &context);
 
+    ODESolver() = delete;
+
     /**
      * Runge–Kutta 4 integrator
      */
@@ -45,8 +47,8 @@ public:
 
 private:
     Context m_context;
-    NewtonSolver m_newton_solver;
-    Utils m_utils;
+    NewtonSolver m_newton_solver = NewtonSolver(Context());
+    Utils m_utils = Utils(Context());
 
     /**
      * Dimension of a system

@@ -19,7 +19,7 @@ class NewtonSolver
 public:
     explicit NewtonSolver(const Context &context);
 
-    NewtonSolver();
+    NewtonSolver() = delete;
 
     /**
      * Solves system of non-linear equations f(x) = 0 using Newton's method
@@ -30,7 +30,7 @@ public:
 
 private:
     Context m_context;
-    Utils m_utils;
+    Utils m_utils = Utils(Context());
 
     static double residual(const std::vector<double> &a, const std::vector<double> &b);
 

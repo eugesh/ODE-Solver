@@ -15,6 +15,8 @@ class Context
 public:
     explicit Context(std::function<std::vector<double>(double t, std::vector<double> x)> &f);
 
+    explicit Context(std::function<std::vector<double>(std::vector<double> x)> &f_autonomous);
+
     Context();
 
     /**
