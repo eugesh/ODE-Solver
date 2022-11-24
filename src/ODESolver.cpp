@@ -325,3 +325,16 @@ void ODESolver::ComputeInitialAI(double &t, std::vector<double> &x)
     }
 }
 
+void ODESolver::rosenbrock()
+{
+    Result.clear();
+
+
+}
+
+void ODESolver::pc()
+{
+    Result.clear();
+
+}
+
