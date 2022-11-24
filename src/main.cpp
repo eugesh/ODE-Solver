@@ -27,7 +27,7 @@ int main()
     context.x_0 = {10, 10, 10};
     context.n = 10;
     context.h = 5e-5;
-    context.t_end = 50;
+    context.t_end = 25;
 
     // Run calculation
     std::thread rk(run_rk, context);

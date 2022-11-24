@@ -113,25 +113,7 @@ void ODESolver::ae()
     computeA();
 
     // Compute n initial values of x
-
-    for (uint32_t j = 0; j < m_context.n; ++j)
-    {
-
-        // TODO optimize this
-        std::vector<double> k_1 = k1(t, x);
-        std::vector<double> k_2 = k2(t, x, k_1);
-        std::vector<double> k_3 = k3(t, x, k_2);
-        std::vector<double> k_4 = k4(t, x, k_3);
-
-        for (uint32_t i = 0; i < x.size(); ++i)
-        {
-            x.at(i) += 1.0 / 6.0 * (k_1.at(i) + 2 * k_2.at(i) + 2 * k_3.at(i) + k_4.at(i));
-        }
-
-        Result.emplace_back(t, x);
-
-        t += m_context.h;
-    }
+    ComputeInitialAE(t, x);
 
     // Run Adams method
 
@@ -180,25 +162,7 @@ void ODESolver::ai()
     computeB();
 
     // Compute n initial values of x
-
-    for (uint32_t j = 0; j < m_context.n - 1; ++j)
-    {
-
-        // TODO optimize this
-        std::vector<double> k_1 = k1(t, x);
-        std::vector<double> k_2 = k2(t, x, k_1);
-        std::vector<double> k_3 = k3(t, x, k_2);
-        std::vector<double> k_4 = k4(t, x, k_3);
-
-        for (uint32_t i = 0; i < x.size(); ++i)
-        {
-            x.at(i) += 1.0 / 6.0 * (k_1.at(i) + 2 * k_2.at(i) + 2 * k_3.at(i) + k_4.at(i));
-        }
-
-        Result.emplace_back(t, x);
-
-        t += m_context.h;
-    }
+    ComputeInitialAI(t, x);
 
     // Run Adams method
 
@@ -316,3 +280,48 @@ ODESolver::ODESolver(const Context& context)
     m_context = context;
     m_newton_solver = NewtonSolver(context);
 }
+
+void ODESolver::ComputeInitialAE(double &t, std::vector<double> &x)
+{
+    for (uint32_t j = 0; j < m_context.n; ++j)
+    {
+
+        // TODO optimize this
+        std::vector<double> k_1 = k1(t, x);
+        std::vector<double> k_2 = k2(t, x, k_1);
+        std::vector<double> k_3 = k3(t, x, k_2);
+        std::vector<double> k_4 = k4(t, x, k_3);
+
+        for (uint32_t i = 0; i < x.size(); ++i)
+        {
+            x.at(i) += 1.0 / 6.0 * (k_1.at(i) + 2 * k_2.at(i) + 2 * k_3.at(i) + k_4.at(i));
+        }
+
+        Result.emplace_back(t, x);
+
+        t += m_context.h;
+    }
+}
+
+void ODESolver::ComputeInitialAI(double &t, std::vector<double> &x)
+{
+    for (uint32_t j = 0; j < m_context.n - 1; ++j)
+    {
+
+        // TODO optimize this
+        std::vector<double> k_1 = k1(t, x);
+        std::vector<double> k_2 = k2(t, x, k_1);
+        std::vector<double> k_3 = k3(t, x, k_2);
+        std::vector<double> k_4 = k4(t, x, k_3);
+
+        for (uint32_t i = 0; i < x.size(); ++i)
+        {
+            x.at(i) += 1.0 / 6.0 * (k_1.at(i) + 2 * k_2.at(i) + 2 * k_3.at(i) + k_4.at(i));
+        }
+
+        Result.emplace_back(t, x);
+
+        t += m_context.h;
+    }
+}
+
