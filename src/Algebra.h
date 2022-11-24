@@ -8,7 +8,8 @@
 #include <vector>
 #include <functional>
 
-namespace algebra{
+namespace algebra
+{
     typedef std::vector<double>::size_type size_type;
 
     /**

@@ -13,17 +13,20 @@
 
 using namespace algebra;
 
-class NewtonSolver{
+class NewtonSolver
+{
 public:
-    explicit NewtonSolver(const Context& context);
+    explicit NewtonSolver(const Context &context);
+
     NewtonSolver();
 
     /**
      * Solves system of non-linear equations f(x) = 0 using Newton's method
      * @return vector of results
      */
-    std::vector<double> solve_newton(std::function<std::vector<double>(std::vector<double>)>& f,
-                        const std::vector<double> &initial_guess, uint32_t max_iterations);
+    std::vector<double> solve_newton(std::function<std::vector<double>(std::vector<double>)> &f,
+                                     const std::vector<double> &initial_guess, uint32_t max_iterations);
+
 private:
     Context m_context;
 
@@ -35,7 +38,7 @@ private:
      * @param f function to derive
      * @param x point in witch to compute derivative
      */
-    void derive(std::function<std::vector<double>(std::vector<double>)>& f, const std::vector<double> &x);
+    void derive(std::function<std::vector<double>(std::vector<double>)> &f, const std::vector<double> &x);
 
     /**
      * Solves linear equation system

@@ -6,8 +6,10 @@
 
 Context::Context()
 {
-    f = [](double t, std::vector<double> x) -> std::vector<double>{
-        for(auto & item : x){
+    f = [](double t, std::vector<double> x) -> std::vector<double>
+    {
+        for (auto &item: x)
+        {
             item = 3.0 * pow(item * item, 0.333);
         }
 

@@ -6,22 +6,25 @@
 #include "ODESolver.h"
 
 void run_rk(const Context &context);
+
 void run_ae(const Context &context);
+
 void run_ai(const Context &context);
 
 int main()
 {
     // Creating function, Context with function and creating ODESolver with Context
     std::function<std::vector<double>(double t, std::vector<double> x)> f =
-            [](double t, std::vector<double> x) -> std::vector<double>{
-        std::vector<double> res(x.size());
+            [](double t, std::vector<double> x) -> std::vector<double>
+            {
+                std::vector<double> res(x.size());
 
-        res[0]=10.0*(x[1]-x[0]);
-        res[1]=x[0]*(28.0-x[2])-x[1];
-        res[2]=x[0]*x[1]-8.0*x[2]/3.0;
+                res[0] = 10.0 * (x[1] - x[0]);
+                res[1] = x[0] * (28.0 - x[2]) - x[1];
+                res[2] = x[0] * x[1] - 8.0 * x[2] / 3.0;
 
-        return res;
-    };
+                return res;
+            };
 
     Context context = Context(f);
     context.x_0 = {10, 10, 10};
@@ -41,7 +44,8 @@ int main()
     return 0;
 }
 
-void run_rk(const Context &context){
+void run_rk(const Context &context)
+{
     ODESolver odeSolver = ODESolver(context);
 
     odeSolver.rk();
@@ -50,7 +54,7 @@ void run_rk(const Context &context){
 
     for (auto &step: odeSolver.Result)
     {
-        auto [ t, x ] = step;
+        auto [t, x] = step;
 
         rk << std::fixed << std::setprecision(10) << t << " ";
 
@@ -65,7 +69,8 @@ void run_rk(const Context &context){
     rk.close();
 }
 
-void run_ae(const Context &context){
+void run_ae(const Context &context)
+{
     ODESolver odeSolver = ODESolver(context);
 
     odeSolver.ae();
@@ -74,7 +79,7 @@ void run_ae(const Context &context){
 
     for (auto &step: odeSolver.Result)
     {
-        auto [ t, x ] = step;
+        auto [t, x] = step;
 
         ae << std::fixed << std::setprecision(10) << t << " ";
 
@@ -89,7 +94,8 @@ void run_ae(const Context &context){
     ae.close();
 }
 
-void run_ai(const Context &context){
+void run_ai(const Context &context)
+{
     ODESolver odeSolver = ODESolver(context);
 
     odeSolver.ai();
@@ -98,7 +104,7 @@ void run_ai(const Context &context){
 
     for (auto &step: odeSolver.Result)
     {
-        auto [ t, x ] = step;
+        auto [t, x] = step;
 
         ai << std::fixed << std::setprecision(10) << t << " ";
 

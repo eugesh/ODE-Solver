@@ -7,7 +7,7 @@
 #include <cmath>
 #include <utility>
 
-NewtonSolver::NewtonSolver(const Context& context)
+NewtonSolver::NewtonSolver(const Context &context)
 {
     m_context = context;
 
@@ -142,10 +142,10 @@ void NewtonSolver::solve(std::vector<std::vector<double>> &mx, std::vector<doubl
 
     res[n - 1] = mx[n - 1][n] / mx[n - 1][n - 1];
 
-    for (int i = (int)n - 2; i >= 0; i--)
+    for (int i = (int) n - 2; i >= 0; i--)
     {
         double sum = 0;
-        for (int j = i + 1; j < (int)n; j++)
+        for (int j = i + 1; j < (int) n; j++)
         {
             sum = sum + mx[i][j] * res[j];
         }
@@ -154,10 +154,12 @@ void NewtonSolver::solve(std::vector<std::vector<double>> &mx, std::vector<doubl
 
     // Restore the order of res //
 
-    for (size_type i = 0; i < n; i++) {
+    for (size_type i = 0; i < n; i++)
+    {
         size_type next = i;
 
-        while (x_order[next] != n) {
+        while (x_order[next] != n)
+        {
 
             std::swap(res[i], res[x_order[next]]);
 

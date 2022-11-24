@@ -4,7 +4,8 @@
 
 #include "Algebra.h"
 
-namespace algebra{
+namespace algebra
+{
     std::vector<double> multiply(const std::vector<std::vector<double>> &m, const std::vector<double> &x)
     {
         size_type n = m.size();
