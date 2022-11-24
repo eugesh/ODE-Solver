@@ -23,6 +23,11 @@ public:
      */
     std::function<std::vector<double>(double t, std::vector<double> x)> f;
     /**
+     * Right part of autonomous ODE x' = f(x). Used in Rosenbrock method for solving stiff equations.
+     * @return x'
+     */
+    std::function<std::vector<double>(std::vector<double> x)> f_autonomous;
+    /**
      * Vector of initial values. For system of n equations n initial values
      */
     std::vector<double> x_0 = {-10};
