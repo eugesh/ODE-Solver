@@ -17,7 +17,7 @@ public:
 
     explicit Context(std::function<std::vector<double>(std::vector<double> x)> &f_autonomous);
 
-    Context();
+    Context() = default;
 
     /**
      * Right part of ODE x' = f(t, x)
