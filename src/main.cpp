@@ -5,11 +5,13 @@
 
 #include "ODESolver.h"
 
-void run_rk(const Context &context);
+void test_rk(const Context &context);
 
-void run_ae(const Context &context);
+void test_ae(const Context &context);
 
-void run_ai(const Context &context);
+void test_ai(const Context &context);
+
+void out(std::vector<std::tuple<double, std::vector<double>>> &res, const std::string& filename);
 
 int main()
 {
@@ -26,16 +28,28 @@ int main()
                 return res;
             };
 
+    std::function<std::vector<double>(std::vector<double> x)> f_autonomous = [](std::vector<double> x) -> std::vector<double>
+    {
+        std::vector<double> res(x.size());
+
+        res[0] = -0.05 * x[0] + 1e4 * x[1] * x[2];
+        res[1] = 0.05 * x[0] - 1e4 * x[1] * x[2] - 1e7 * x[1];
+        res[2] = 1e7 * x[1];
+
+        return res;
+    };
+
     Context context = Context(f);
+    context.f_autonomous = f_autonomous;
     context.x_0 = {10, 10, 10};
     context.n = 10;
     context.h = 5e-5;
     context.t_end = 25;
 
     // Run calculation
-    std::thread rk(run_rk, context);
-    std::thread ae(run_ae, context);
-    std::thread ai(run_ai, context);
+    std::thread rk(test_rk, context);
+    std::thread ae(test_ae, context);
+    std::thread ai(test_ai, context);
 
     rk.join();
     ae.join();
@@ -44,15 +58,10 @@ int main()
     return 0;
 }
 
-void run_rk(const Context &context)
-{
-    ODESolver odeSolver = ODESolver(context);
+void out(std::vector<std::tuple<double, std::vector<double>>> &res, const std::string& filename){
+    std::ofstream rk(filename);
 
-    odeSolver.rk();
-
-    std::ofstream rk("rk.dat");
-
-    for (auto &step: odeSolver.Result)
+    for (auto &step: res)
     {
         auto [t, x] = step;
 
@@ -69,52 +78,29 @@ void run_rk(const Context &context)
     rk.close();
 }
 
-void run_ae(const Context &context)
+void test_rk(const Context &context)
+{
+    ODESolver odeSolver = ODESolver(context);
+
+    odeSolver.rk();
+
+    out(odeSolver.Result, "rk.dat");
+}
+
+void test_ae(const Context &context)
 {
     ODESolver odeSolver = ODESolver(context);
 
     odeSolver.ae();
 
-    std::ofstream ae("ae.dat");
-
-    for (auto &step: odeSolver.Result)
-    {
-        auto [t, x] = step;
-
-        ae << std::fixed << std::setprecision(10) << t << " ";
-
-        for (auto &item: x)
-        {
-            ae << item << " ";
-        }
-
-        ae << std::endl;
-    }
-
-    ae.close();
+    out(odeSolver.Result, "ae.dat");
 }
 
-void run_ai(const Context &context)
+void test_ai(const Context &context)
 {
     ODESolver odeSolver = ODESolver(context);
 
     odeSolver.ai();
 
-    std::ofstream ai("ai.dat");
-
-    for (auto &step: odeSolver.Result)
-    {
-        auto [t, x] = step;
-
-        ai << std::fixed << std::setprecision(10) << t << " ";
-
-        for (auto &item: x)
-        {
-            ai << item << " ";
-        }
-
-        ai << std::endl;
-    }
-
-    ai.close();
+    out(odeSolver.Result, "ai.dat");
 }
