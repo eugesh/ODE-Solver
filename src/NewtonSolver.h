@@ -10,6 +10,7 @@
 
 #include "Algebra.h"
 #include "Context.h"
+#include "Utils.h"
 
 using namespace algebra;
 
@@ -29,16 +30,9 @@ public:
 
 private:
     Context m_context;
+    Utils m_utils;
 
     static double residual(const std::vector<double> &a, const std::vector<double> &b);
-
-    /**
-     * Computes derivative (Jordan matrix)
-     * @param m result Jordan matrix
-     * @param f function to derive
-     * @param x point in witch to compute derivative
-     */
-    void derive(std::function<std::vector<double>(std::vector<double>)> &f, const std::vector<double> &x);
 
     /**
      * Solves linear equation system

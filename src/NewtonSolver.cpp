@@ -10,6 +10,7 @@
 NewtonSolver::NewtonSolver(const Context &context)
 {
     m_context = context;
+    m_utils = Utils(m_context);
 
     // Create matrix of derivatives
     size_type n = context.x_0.size();
@@ -32,7 +33,7 @@ std::vector<double> NewtonSolver::solve_newton(std::function<std::vector<double>
     for (uint32_t i = 0; i < max_iterations; ++i)
     {
         // Find all derivatives (last column stay intact)
-        derive(f, tmp);
+        m_utils.derive(m, f, tmp);
 
         // Find right part and put into m (compute last column)
         plug_vector(m, subtract(multiply(m, tmp), f(tmp)));
@@ -63,30 +64,6 @@ double NewtonSolver::residual(const std::vector<double> &a, const std::vector<do
     }
 
     return res;
-}
-
-void NewtonSolver::derive(std::function<std::vector<double>(std::vector<double>)> &f, const std::vector<double> &x)
-{
-    size_type n = m.size();
-
-    std::vector<double> l = x;
-    std::vector<double> r = x;
-
-    for (size_type column = 0; column < n; ++column)
-    {
-        l[column] += m_context.newton_derive_step;
-        r[column] -= m_context.newton_derive_step;
-
-        std::vector<double> d = divide(subtract(f(l), f(r)), 2 * m_context.newton_derive_step);
-
-        for (size_type row = 0; row < n; ++row)
-        {
-            m[row][column] = d[row];
-        }
-
-        l[column] -= m_context.newton_derive_step;
-        r[column] += m_context.newton_derive_step;
-    }
 }
 
 void NewtonSolver::solve(std::vector<std::vector<double>> &mx, std::vector<double> &res)
@@ -174,6 +151,7 @@ void NewtonSolver::solve(std::vector<std::vector<double>> &mx, std::vector<doubl
 NewtonSolver::NewtonSolver()
 {
     m_context = Context();
+    m_utils = Utils();
 
     // Create matrix of derivatives
     size_type n = m_context.x_0.size();

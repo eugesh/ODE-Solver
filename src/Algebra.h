@@ -28,14 +28,6 @@ namespace algebra
     std::vector<double> divide(const std::vector<double> &a, double value);
 
     /**
-     * Creates matrix
-     * @param m result matrix
-     * @param height matrix height
-     * @param with matrix with
-     */
-    void create(std::vector<std::vector<double>> &m, size_type height, size_type with);
-
-    /**
      * Creates n x n + 1 matrix from n x n matrix and n x 1 vector
      * @param m initial and resulted matrix
      * @param x vector

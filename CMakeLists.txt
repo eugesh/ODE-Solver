@@ -11,4 +11,5 @@ add_executable(numerical_task_9 src/main.cpp
         src/Context.cpp src/Context.h
         src/ODESolver.cpp src/ODESolver.h
         src/Algebra.cpp src/Algebra.h
-        src/NewtonSolver.cpp src/NewtonSolver.h)
+        src/NewtonSolver.cpp src/NewtonSolver.h
+        src/Utils.cpp src/Utils.h)

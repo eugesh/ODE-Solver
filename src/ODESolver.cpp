@@ -329,12 +329,24 @@ void ODESolver::rosenbrock()
 {
     Result.clear();
 
+    double t = m_context.t_begin;
+    std::vector<double> x = m_context.x_0;
 
+    while (t < m_context.t_end)
+    {
+
+        // TODO
+
+        Result.emplace_back(t, x);
+
+        t += m_context.h;
+    }
 }
 
 void ODESolver::pc()
 {
     Result.clear();
 
+    // TODO
 }
 
