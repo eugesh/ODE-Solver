@@ -46,6 +46,12 @@ public:
 private:
     Context m_context;
     NewtonSolver m_newton_solver;
+    Utils m_utils;
+
+    /**
+     * Dimension of a system
+     */
+    algebra::size_type dim;
 
     /**
      * Methods for calculating KR4 coefficients

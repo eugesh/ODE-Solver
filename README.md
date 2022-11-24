@@ -5,8 +5,8 @@
 Can solve systems of ordinary differential equation by using methods:
 
 * Classic Runge-Kutta fourth order method
-* Adams extrapolation n-th order
-* Adams interpolation n-th order
+* Adams extrapolation dim-th order
+* Adams interpolation dim-th order
 
 # How to use
 
@@ -40,7 +40,7 @@ context.x_0 = {10, 10, 10};
 context.t_begin = 0.0;
 context.t_end = 100.0;
 context.h = 5e-5; // Integration step
-context.n = 10; // Order of Adams methods
+context.dim = 10; // Order of Adams methods
 ```
 
 Then you can create instance of `ODESolver`:
