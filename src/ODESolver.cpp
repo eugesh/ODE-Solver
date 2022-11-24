@@ -5,13 +5,17 @@
 #include "ODESolver.h"
 
 #include <cmath>
-#include <algorithm>
 #include <functional>
 #include <utility>
 #include <iostream>
 
 void ODESolver::rk()
 {
+    if(!m_context.f){
+        std::cerr << "ODE is not defined!" << std::endl;
+        std::exit(1);
+    }
+
     Result.clear();
 
     double t = m_context.t_begin;
@@ -105,6 +109,11 @@ std::vector<double> ODESolver::k4(double t, std::vector<double> x, std::vector<d
 
 void ODESolver::ae()
 {
+    if(!m_context.f){
+        std::cerr << "ODE is not defined!" << std::endl;
+        std::exit(1);
+    }
+
     Result.clear();
 
     double t = m_context.t_begin;
@@ -154,6 +163,11 @@ void ODESolver::ae()
 
 void ODESolver::ai()
 {
+    if(!m_context.f){
+        std::cerr << "ODE is not defined!" << std::endl;
+        std::exit(1);
+    }
+
     Result.clear();
 
     double t = m_context.t_begin;
@@ -330,6 +344,11 @@ void ODESolver::ComputeInitialAI(double &t, std::vector<double> &x)
 
 void ODESolver::rosenbrock()
 {
+    if(!m_context.f_autonomous){
+        std::cerr << "Autonomous ODE is not defined!" << std::endl;
+        std::exit(1);
+    }
+
     Result.clear();
 
     double t = m_context.t_begin;
