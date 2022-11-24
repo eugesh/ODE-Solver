@@ -23,6 +23,15 @@ public:
     void derive(std::vector<std::vector<double>> &mx, std::function<std::vector<double>(std::vector<double>)> &f,
                 const std::vector<double> &x) const;
 
+    /**
+     * Solves linear equation system
+     * @param mx matrix with left and right parts of the system
+     * @param res vector of results
+     */
+    void solve(std::vector<std::vector<double>> &mx, std::vector<double> &res);
+
+    double residual(const std::vector<double> &a, const std::vector<double> &b);
+
 private:
     Context m_context;
 };

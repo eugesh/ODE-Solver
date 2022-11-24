@@ -32,15 +32,6 @@ private:
     Context m_context;
     Utils m_utils = Utils(Context());
 
-    static double residual(const std::vector<double> &a, const std::vector<double> &b);
-
-    /**
-     * Solves linear equation system
-     * @param mx matrix with left and right parts of the system
-     * @param res vector of results
-     */
-    static void solve(std::vector<std::vector<double>> &mx, std::vector<double> &res);
-
     /**
      * Matrix of derivatives n by n + 1: (derivatives | derivatives * previous - f(previous))
      */
