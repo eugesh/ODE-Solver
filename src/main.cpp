@@ -26,9 +26,9 @@ int main()
             {
                 std::vector<double> res(x.size());
 
-                res[0] = 10.0 * (x[1] - x[0]);
-                res[1] = x[0] * (28.0 - x[2]) - x[1];
-                res[2] = x[0] * x[1] - 8.0 * x[2] / 3.0;
+                res[0] = -0.05 * x[0] + 1e4 * x[1] * x[2];
+                res[1] = 0.05 * x[0] - 1e4 * x[1] * x[2] - 1e7 * x[1];
+                res[2] = 1e7 * x[1];
 
                 return res;
             };
@@ -48,23 +48,19 @@ int main()
     context.f_autonomous = f_autonomous;
     context.x_0 = {1, 5e7, 10e-8};
     context.n = 4;
-    context.h = 1e-13;
+    context.h = 1e-11;
     context.t_begin = 0;
-    context.t_end = 0.000000007;
+    context.t_end = 0.00005;
 
-    /*
     std::thread rk(test_rk, context);
     std::thread ae(test_ae, context);
     std::thread ai(test_ai, context);
+    std::thread rosen(test_rosen, context);
+    //std::thread precor(test_precor, context);
 
     rk.join();
     ae.join();
     ai.join();
-    */
-
-    std::thread rosen(test_rosen, context);
-    //std::thread precor(test_precor, context);
-
     rosen.join();
     //precor.join();
 
@@ -74,8 +70,15 @@ int main()
 void out(std::vector<std::tuple<double, std::vector<double>>> &res, const std::string& filename){
     std::ofstream file(filename);
 
+    int i = 1;
+
     for (auto &step: res)
     {
+        i++;
+        if (i % 10 != 0){
+            continue;
+        }
+
         auto [t, x] = step;
 
         file << std::fixed << std::setprecision(20) << t << " ";
