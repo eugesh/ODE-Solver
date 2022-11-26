@@ -19,18 +19,18 @@ void Utils::derive(std::vector<std::vector<double>> &mx, std::function<std::vect
 
     for (algebra::size_type column = 0; column < n; ++column)
     {
-        l[column] += m_context.newton_derive_step;
-        r[column] -= m_context.newton_derive_step;
+        l[column] += m_context.derive_step;
+        r[column] -= m_context.derive_step;
 
-        std::vector<double> d = algebra::divide(algebra::subtract(f(l), f(r)), 2 * m_context.newton_derive_step);
+        std::vector<double> d = algebra::divide(algebra::difference(f(l), f(r)), 2 * m_context.derive_step);
 
         for (algebra::size_type row = 0; row < n; ++row)
         {
             mx[row][column] = d[row];
         }
 
-        l[column] -= m_context.newton_derive_step;
-        r[column] += m_context.newton_derive_step;
+        l[column] -= m_context.derive_step;
+        r[column] += m_context.derive_step;
     }
 }
 

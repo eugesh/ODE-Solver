@@ -8,10 +8,12 @@
 #include <functional>
 #include <utility>
 #include <iostream>
+#include <iomanip>
 
 void ODESolver::rk()
 {
-    if(!m_context.f){
+    if (!m_context.f)
+    {
         std::cerr << "ODE is not defined!" << std::endl;
         std::exit(1);
     }
@@ -109,7 +111,8 @@ std::vector<double> ODESolver::k4(double t, std::vector<double> x, std::vector<d
 
 void ODESolver::ae()
 {
-    if(!m_context.f){
+    if (!m_context.f)
+    {
         std::cerr << "ODE is not defined!" << std::endl;
         std::exit(1);
     }
@@ -144,7 +147,7 @@ void ODESolver::ae()
         {
             for (algebra::size_type i = 0; i < dim; ++i)
             {
-                x.at(i) += A.at(m_context.n - 1 -j) * fs.at(j).at(i) * m_context.h;
+                x.at(i) += A.at(m_context.n - 1 - j) * fs.at(j).at(i) * m_context.h;
             }
         }
 
@@ -163,7 +166,8 @@ void ODESolver::ae()
 
 void ODESolver::ai()
 {
-    if(!m_context.f){
+    if (!m_context.f)
+    {
         std::cerr << "ODE is not defined!" << std::endl;
         std::exit(1);
     }
@@ -276,7 +280,7 @@ int32_t ODESolver::factorial(int32_t x)
     return res;
 }
 
-double ODESolver::integrate(std::function<double(int32_t j, double z)>& integrand, int32_t j) const
+double ODESolver::integrate(std::function<double(int32_t j, double z)> &integrand, int32_t j) const
 {
     auto in = (int32_t) m_context.in;
     double res = 0;
@@ -289,7 +293,7 @@ double ODESolver::integrate(std::function<double(int32_t j, double z)>& integran
     return res;
 }
 
-ODESolver::ODESolver(const Context& context)
+ODESolver::ODESolver(const Context &context)
 {
     m_context = context;
     m_newton_solver = NewtonSolver(m_context);
@@ -344,7 +348,8 @@ void ODESolver::ComputeInitialAI(double &t, std::vector<double> &x)
 
 void ODESolver::rosenbrock()
 {
-    if(!m_context.f_autonomous){
+    if (!m_context.f_autonomous)
+    {
         std::cerr << "Autonomous ODE is not defined!" << std::endl;
         std::exit(1);
     }
@@ -354,16 +359,52 @@ void ODESolver::rosenbrock()
     double t = m_context.t_begin;
     std::vector<double> x = m_context.x_0;
 
-    // Create Jordan matrix
+    // Create Jacobi matrix
     std::vector<std::vector<double>> J(dim);
     for (auto &item: J)
     {
         item = std::vector<double>(dim);
     }
 
+    // Magic numbers
+    double alpha = 1.077;
+    double betta = -0.372;
+    double gamma = -0.577;
+
     while (t < m_context.t_end)
     {
+        // Calculate Jacobi matrix
         m_utils.derive(J, m_context.f_autonomous, x);
+
+        std::vector<std::vector<double>> JJ = algebra::multiply(J, J);
+
+        // Left part
+        algebra::multiply(JJ, -betta * m_context.h * m_context.h);
+        algebra::multiply(J, -alpha * m_context.h);
+        algebra::summ(JJ, J);
+        algebra::summ(JJ, algebra::one(dim));
+        algebra::multiply(JJ, 1.0 / m_context.h);
+
+        //Right part
+        std::vector<double> jj = m_context.f_autonomous(
+                algebra::summ(x, algebra::multiply(m_context.f_autonomous(x), gamma * m_context.h))
+                );
+
+        // Construct system and solve
+
+        for (algebra::size_type i = 0; i < dim; ++i)
+        {
+            JJ.at(i).push_back(jj.at(i));
+        }
+
+        std::vector<double> tmp(x);
+
+        m_utils.solve(JJ, x);
+
+        for (algebra::size_type i = 0; i < dim; ++i)
+        {
+            x.at(i) += tmp.at(i);
+        }
 
         Result.emplace_back(t, x);
 

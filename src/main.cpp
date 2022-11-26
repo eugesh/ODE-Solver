@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iomanip>
 #include <thread>
+#include <tuple>
 
 #include "ODESolver.h"
 
@@ -10,6 +11,10 @@ void test_rk(const Context &context);
 void test_ae(const Context &context);
 
 void test_ai(const Context &context);
+
+void test_rosen(const Context &context);
+
+void test_precor(const Context &context);
 
 void out(std::vector<std::tuple<double, std::vector<double>>> &res, const std::string& filename);
 
@@ -41,12 +46,13 @@ int main()
 
     Context context = Context(f);
     context.f_autonomous = f_autonomous;
-    context.x_0 = {10, 10, 10};
-    context.n = 10;
-    context.h = 5e-5;
-    context.t_end = 25;
+    context.x_0 = {1, 5e7, 10e-8};
+    context.n = 4;
+    context.h = 1e-13;
+    context.t_begin = 0;
+    context.t_end = 0.000000007;
 
-    // Run calculation
+    /*
     std::thread rk(test_rk, context);
     std::thread ae(test_ae, context);
     std::thread ai(test_ai, context);
@@ -54,28 +60,35 @@ int main()
     rk.join();
     ae.join();
     ai.join();
+    */
+
+    std::thread rosen(test_rosen, context);
+    //std::thread precor(test_precor, context);
+
+    rosen.join();
+    //precor.join();
 
     return 0;
 }
 
 void out(std::vector<std::tuple<double, std::vector<double>>> &res, const std::string& filename){
-    std::ofstream rk(filename);
+    std::ofstream file(filename);
 
     for (auto &step: res)
     {
         auto [t, x] = step;
 
-        rk << std::fixed << std::setprecision(10) << t << " ";
+        file << std::fixed << std::setprecision(20) << t << " ";
 
         for (auto &item: x)
         {
-            rk << item << " ";
+            file << item << " ";
         }
 
-        rk << std::endl;
+        file << std::endl;
     }
 
-    rk.close();
+    file.close();
 }
 
 void test_rk(const Context &context)
@@ -103,4 +116,20 @@ void test_ai(const Context &context)
     odeSolver.ai();
 
     out(odeSolver.Result, "ai.dat");
+}
+
+void test_rosen(const Context &context){
+    ODESolver odeSolver = ODESolver(context);
+
+    odeSolver.rosenbrock();
+
+    out(odeSolver.Result, "rosen.dat");
+}
+
+void test_precor(const Context &context){
+    ODESolver odeSolver = ODESolver(context);
+
+    odeSolver.pc();
+
+    out(odeSolver.Result, "precor.dat");
 }

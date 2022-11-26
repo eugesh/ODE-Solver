@@ -35,7 +35,7 @@ std::vector<double> NewtonSolver::solve_newton(std::function<std::vector<double>
         m_utils.derive(m, f, tmp);
 
         // Find right part and put into m (compute last column)
-        plug_vector(m, subtract(multiply(m, tmp), f(tmp)));
+        plug_vector(m, difference(multiply(m, tmp), f(tmp)));
 
         // Solve system of linear equations
         m_utils.solve(m, output);

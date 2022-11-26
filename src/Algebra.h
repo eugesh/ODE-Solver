@@ -15,7 +15,19 @@ namespace algebra
     /**
      * Vector difference
      */
-    std::vector<double> subtract(const std::vector<double> &a, const std::vector<double> &b);
+    std::vector<double> difference(const std::vector<double> &a, const std::vector<double> &b);
+
+    /**
+     * Vector by number multiplication
+     */
+    std::vector<double> multiply(const std::vector<double> &a, double value);
+
+
+    /**
+     * Vector summ
+     */
+    std::vector<double> summ(const std::vector<double> &a, const std::vector<double> &b);
+
 
     /**
      * Matrix by vector multiplication
@@ -33,6 +45,38 @@ namespace algebra
      * @param x vector
      */
     void plug_vector(std::vector<std::vector<double>> &m, const std::vector<double> &x);
+
+    /**
+     * Matrix summ
+     */
+    void summ(std::vector<std::vector<double>> &a, const std::vector<std::vector<double>> &b);
+
+    /**
+     * Matrix difference
+     */
+    void difference(std::vector<std::vector<double>> &a, const std::vector<std::vector<double>> &b);
+
+
+    /**
+     * Matrix by number multiplication
+     */
+    void multiply(std::vector<std::vector<double>> &a, double value);
+
+    /**
+     * Matrix by matrix multiplication
+     */
+    std::vector<std::vector<double>> multiply(const std::vector<std::vector<double>> &a, const std::vector<std::vector<double>> &b);
+
+    /**
+     * Identity matrix
+     */
+    std::vector<std::vector<double>> one(size_type n);
+
+    /**
+     * Empty matrix
+     */
+    std::vector<std::vector<double>> zero(size_type n);
+
 }
 
 #endif //NUMERICAL_TASK_9_ALGEBRA_H

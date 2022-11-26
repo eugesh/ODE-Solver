@@ -54,7 +54,7 @@ public:
      */
     uint32_t in = 100000;
 
-    double newton_derive_step = 10e-8;
+    double derive_step = 10e-8;
     double newton_precision = 10e-8;
     uint32_t newton_max_iterations = 1000;
 };
