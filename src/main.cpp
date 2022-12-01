@@ -50,7 +50,7 @@ int main()
     context.f_autonomous = f_autonomous;
     context.x_0 = {1, 1};
     context.adams_order = 5;
-    context.h = 1e-6;
+    context.h = 1e-4;
     context.t_begin = 0;
     context.t_end = 10;
 
@@ -72,14 +72,8 @@ int main()
 void out(std::vector<std::tuple<double, std::vector<double>>> &res, const std::string& filename){
     std::ofstream file(filename);
 
-    int i = 1;
-
     for (auto &step: res)
     {
-        i++;
-        if (i % 10 != 0){
-            continue;
-        }
 
         auto [t, x] = step;
 

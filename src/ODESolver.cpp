@@ -131,7 +131,7 @@ void ODESolver::ae()
 
     // Create n initial values of f
     std::vector<std::vector<double>> fs(m_context.adams_order);
-    for (algebra::size_type i = 0; i < m_context.adams_order; ++i)
+    for (algebra::size_type i = 0; i < Result.size(); ++i)
     {
         algebra::size_type index = Result.size() - 1 - i;
         fs.at(i) = m_context.f(
@@ -433,7 +433,7 @@ void ODESolver::pc()
 
     // Create n initial values of f
     std::vector<std::vector<double>> fs(m_context.adams_order);
-    for (algebra::size_type i = 0; i < m_context.adams_order; ++i)
+    for (algebra::size_type i = 0; i < Result.size(); ++i)
     {
         algebra::size_type index = Result.size() - 1 - i;
         fs.at(i) = m_context.f(
@@ -477,7 +477,6 @@ void ODESolver::pc()
     while (t < m_context.t_end)
     {
         // Create predictor using ae
-
         for (algebra::size_type j = 0; j < m_context.adams_order; ++j)
         {
             for (algebra::size_type i = 0; i < dim; ++i)
@@ -490,6 +489,7 @@ void ODESolver::pc()
         x = m_newton_solver.solve_newton(f, x);
 
         Result.emplace_back(t, x);
+
         t += m_context.h;
 
         // Shift fs and compute next
