@@ -26,9 +26,10 @@ int main()
             {
                 std::vector<double> res(x.size());
 
-                res[0] = -0.05 * x[0] + 1e4 * x[1] * x[2];
-                res[1] = 0.05 * x[0] - 1e4 * x[1] * x[2] - 1e7 * x[1];
-                res[2] = 1e7 * x[1];
+                double kappa = 10;
+
+                res[0] = x[1];
+                res[1] = kappa * (1 - x[0] * x[0]) * x[1] - x[0];
 
                 return res;
             };
@@ -37,32 +38,33 @@ int main()
     {
         std::vector<double> res(x.size());
 
-        res[0] = -0.05 * x[0] + 1e4 * x[1] * x[2];
-        res[1] = 0.05 * x[0] - 1e4 * x[1] * x[2] - 1e7 * x[1];
-        res[2] = 1e7 * x[1];
+        double kappa = 10;
+
+        res[0] = x[1];
+        res[1] = kappa * (1 - x[0] * x[0]) * x[1] - x[0];
 
         return res;
     };
 
     Context context = Context(f);
     context.f_autonomous = f_autonomous;
-    context.x_0 = {1, 5e7, 10e-8};
+    context.x_0 = {1, 1};
     context.n = 4;
-    context.h = 1e-11;
+    context.h = 1e-4;
     context.t_begin = 0;
-    context.t_end = 0.00005;
+    context.t_end = 1000;
 
     std::thread rk(test_rk, context);
     std::thread ae(test_ae, context);
     std::thread ai(test_ai, context);
     std::thread rosen(test_rosen, context);
-    //std::thread precor(test_precor, context);
+    std::thread precor(test_precor, context);
 
     rk.join();
     ae.join();
     ai.join();
     rosen.join();
-    //precor.join();
+    precor.join();
 
     return 0;
 }
@@ -70,14 +72,14 @@ int main()
 void out(std::vector<std::tuple<double, std::vector<double>>> &res, const std::string& filename){
     std::ofstream file(filename);
 
-    int i = 1;
+    // int i = 1;
 
     for (auto &step: res)
     {
-        i++;
-        if (i % 10 != 0){
-            continue;
-        }
+        // i++;
+        // if (i % 10 != 0){
+        //     continue;
+        // }
 
         auto [t, x] = step;
 

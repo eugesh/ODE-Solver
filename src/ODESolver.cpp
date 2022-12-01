@@ -414,8 +414,90 @@ void ODESolver::rosenbrock()
 
 void ODESolver::pc()
 {
+    if (!m_context.f)
+    {
+        std::cerr << "ODE is not defined!" << std::endl;
+        std::exit(1);
+    }
+
     Result.clear();
 
-    // TODO
+    double t = m_context.t_begin;
+    std::vector<double> x = m_context.x_0;
+
+    computeA();
+    computeB();
+
+    // Compute n initial values of x for AE
+    ComputeInitialAE(t, x);
+
+    // Create n initial values of f
+    std::vector<std::vector<double>> fs(m_context.n);
+    for (algebra::size_type i = 0; i < m_context.n; ++i)
+    {
+        algebra::size_type index = Result.size() - 1 - i;
+        fs.at(i) = m_context.f(
+                std::get<0>(Result.at(index)),
+                std::get<1>(Result.at(index))
+        );
+    }
+
+    // Function to solve using Newton's method
+    std::function<std::vector<double>(std::vector<double>)> f =
+            [&fs, &t, this, &x](std::vector<double> y) -> std::vector<double>
+            {
+                std::vector<double> res = m_context.f(t, y);
+
+                for (double &re: res)
+                {
+                    re *= B[0];
+                }
+
+                for (algebra::size_type j = 0; j < fs.size(); ++j)
+                {
+                    for (algebra::size_type i = 0; i < dim; ++i)
+                    {
+                        res[i] += B[m_context.n - 1 - j] * fs[j][i];
+                    }
+                }
+
+                for (double &re: res)
+                {
+                    re *= m_context.h;
+                }
+
+                for (algebra::size_type i = 0; i < dim; ++i)
+                {
+                    res[i] += x[i] - y[i];
+                }
+
+                return res;
+            };
+
+    while (t < m_context.t_end)
+    {
+        // Create predictor using ae
+
+        for (algebra::size_type j = 0; j < m_context.n; ++j)
+        {
+            for (algebra::size_type i = 0; i < dim; ++i)
+            {
+                x.at(i) += A.at(m_context.n - 1 - j) * fs.at(j).at(i) * m_context.h;
+            }
+        }
+
+        // Correct using ei
+        x = m_newton_solver.solve_newton(f, x, m_context.newton_max_iterations);
+
+        Result.emplace_back(t, x);
+        t += m_context.h;
+
+        // Shift fs and compute next
+        for (uint32_t i = 0; i < fs.size() - 1; ++i)
+        {
+            fs.at(i) = std::move(fs.at(i + 1));
+        }
+        fs.at(fs.size() - 1) = m_context.f(t, x);
+    }
 }
 
