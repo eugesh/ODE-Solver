@@ -48,7 +48,7 @@ public:
     /**
      * Order of Adams interpolation / extrapolation method
      */
-    uint32_t n = 4;
+    uint32_t adams_order = 4;
     /**
      * Number of integration steps in calculating Anj and Bnj for Adams methods
      */

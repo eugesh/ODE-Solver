@@ -22,14 +22,14 @@ NewtonSolver::NewtonSolver(const Context &context)
 }
 
 std::vector<double> NewtonSolver::solve_newton(std::function<std::vector<double>(std::vector<double>)> &f,
-                                               const std::vector<double> &initial_guess, uint32_t max_iterations)
+                                               const std::vector<double> &initial_guess)
 {
     size_type n = initial_guess.size();
 
     std::vector<double> tmp = initial_guess;
     std::vector<double> output(n);
 
-    for (uint32_t i = 0; i < max_iterations; ++i)
+    for (uint32_t i = 0; i < m_context.newton_max_iterations; ++i)
     {
         // Find all derivatives (last column stay intact)
         m_utils.derive(m, f, tmp);

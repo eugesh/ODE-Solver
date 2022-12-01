@@ -130,8 +130,8 @@ void ODESolver::ae()
     // Run Adams method
 
     // Create n initial values of f
-    std::vector<std::vector<double>> fs(m_context.n);
-    for (algebra::size_type i = 0; i < m_context.n; ++i)
+    std::vector<std::vector<double>> fs(m_context.adams_order);
+    for (algebra::size_type i = 0; i < m_context.adams_order; ++i)
     {
         algebra::size_type index = Result.size() - 1 - i;
         fs.at(i) = m_context.f(
@@ -143,11 +143,11 @@ void ODESolver::ae()
     while (t < m_context.t_end)
     {
 
-        for (algebra::size_type j = 0; j < m_context.n; ++j)
+        for (algebra::size_type j = 0; j < m_context.adams_order; ++j)
         {
             for (algebra::size_type i = 0; i < dim; ++i)
             {
-                x.at(i) += A.at(m_context.n - 1 - j) * fs.at(j).at(i) * m_context.h;
+                x.at(i) += A.at(m_context.adams_order - 1 - j) * fs.at(j).at(i) * m_context.h;
             }
         }
 
@@ -185,7 +185,7 @@ void ODESolver::ai()
     // Run Adams method
 
     // Create n initial values of f
-    std::vector<std::vector<double>> fs(m_context.n - 1);
+    std::vector<std::vector<double>> fs(m_context.adams_order - 1);
     for (uint32_t i = 0; i < Result.size(); ++i)
     {
         uint32_t index = Result.size() - 1 - i;
@@ -209,7 +209,7 @@ void ODESolver::ai()
                 {
                     for (algebra::size_type i = 0; i < dim; ++i)
                     {
-                        res[i] += B[m_context.n - 1 - j] * fs[j][i];
+                        res[i] += B[m_context.adams_order - 1 - j] * fs[j][i];
                     }
                 }
 
@@ -228,7 +228,7 @@ void ODESolver::ai()
 
     while (t < m_context.t_end)
     {
-        x = m_newton_solver.solve_newton(f, x, m_context.newton_max_iterations);
+        x = m_newton_solver.solve_newton(f, x);
         Result.emplace_back(t, x);
 
         t += m_context.h;
@@ -244,12 +244,12 @@ void ODESolver::ai()
 
 void ODESolver::computeA()
 {
-    A = std::vector<double>(m_context.n);
+    A = std::vector<double>(m_context.adams_order);
 
     //TODO optimize this
-    for (int32_t j = 0; j < (int32_t) m_context.n; ++j)
+    for (int32_t j = 0; j < (int32_t) m_context.adams_order; ++j)
     {
-        A.at(j) = pow(-1.0, j) / (factorial(j) * factorial((int32_t) m_context.n - 1 - j));
+        A.at(j) = pow(-1.0, j) / (factorial(j) * factorial((int32_t) m_context.adams_order - 1 - j));
 
         A.at(j) *= integrate(integrandForA, j);
     }
@@ -257,12 +257,12 @@ void ODESolver::computeA()
 
 void ODESolver::computeB()
 {
-    B = std::vector<double>(m_context.n);
+    B = std::vector<double>(m_context.adams_order);
 
     //TODO optimize this
-    for (int32_t j = -1; j < (int32_t) m_context.n - 1; ++j)
+    for (int32_t j = -1; j < (int32_t) m_context.adams_order - 1; ++j)
     {
-        B.at(j + 1) = pow(-1.0, j + 1) / (factorial(j + 1) * factorial((int32_t) m_context.n - 2 - j));
+        B.at(j + 1) = pow(-1.0, j + 1) / (factorial(j + 1) * factorial((int32_t) m_context.adams_order - 2 - j));
 
         B.at(j + 1) *= integrate(integrandForB, j);
     }
@@ -304,7 +304,7 @@ ODESolver::ODESolver(const Context &context)
 
 void ODESolver::ComputeInitialAE(double &t, std::vector<double> &x)
 {
-    for (uint32_t j = 0; j < m_context.n; ++j)
+    for (uint32_t j = 0; j < m_context.adams_order; ++j)
     {
 
         // TODO optimize this
@@ -326,7 +326,7 @@ void ODESolver::ComputeInitialAE(double &t, std::vector<double> &x)
 
 void ODESolver::ComputeInitialAI(double &t, std::vector<double> &x)
 {
-    for (uint32_t j = 0; j < m_context.n - 1; ++j)
+    for (uint32_t j = 0; j < m_context.adams_order - 1; ++j)
     {
 
         // TODO optimize this
@@ -432,8 +432,8 @@ void ODESolver::pc()
     ComputeInitialAE(t, x);
 
     // Create n initial values of f
-    std::vector<std::vector<double>> fs(m_context.n);
-    for (algebra::size_type i = 0; i < m_context.n; ++i)
+    std::vector<std::vector<double>> fs(m_context.adams_order);
+    for (algebra::size_type i = 0; i < m_context.adams_order; ++i)
     {
         algebra::size_type index = Result.size() - 1 - i;
         fs.at(i) = m_context.f(
@@ -457,7 +457,7 @@ void ODESolver::pc()
                 {
                     for (algebra::size_type i = 0; i < dim; ++i)
                     {
-                        res[i] += B[m_context.n - 1 - j] * fs[j][i];
+                        res[i] += B[m_context.adams_order - 1 - j] * fs[j][i];
                     }
                 }
 
@@ -478,22 +478,22 @@ void ODESolver::pc()
     {
         // Create predictor using ae
 
-        for (algebra::size_type j = 0; j < m_context.n; ++j)
+        for (algebra::size_type j = 0; j < m_context.adams_order; ++j)
         {
             for (algebra::size_type i = 0; i < dim; ++i)
             {
-                x.at(i) += A.at(m_context.n - 1 - j) * fs.at(j).at(i) * m_context.h;
+                x.at(i) += A.at(m_context.adams_order - 1 - j) * fs.at(j).at(i) * m_context.h;
             }
         }
 
         // Correct using ei
-        x = m_newton_solver.solve_newton(f, x, m_context.newton_max_iterations);
+        x = m_newton_solver.solve_newton(f, x);
 
         Result.emplace_back(t, x);
         t += m_context.h;
 
         // Shift fs and compute next
-        for (uint32_t i = 0; i < fs.size() - 1; ++i)
+        for (algebra::size_type i = 0; i < fs.size() - 1; ++i)
         {
             fs.at(i) = std::move(fs.at(i + 1));
         }

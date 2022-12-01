@@ -112,7 +112,7 @@ private:
     {
         double res = 1;
 
-        for (int32_t i = 0; i < (int32_t) m_context.n; ++i)
+        for (int32_t i = 0; i < (int32_t) m_context.adams_order; ++i)
         {
             if (i == j)
             {
@@ -131,7 +131,7 @@ private:
     {
         double res = 1;
 
-        for (int32_t i = -1; i < (int32_t) m_context.n - 1; ++i)
+        for (int32_t i = -1; i < (int32_t) m_context.adams_order - 1; ++i)
         {
             if (i == j)
             {

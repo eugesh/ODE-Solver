@@ -26,7 +26,7 @@ public:
      * @return vector of results
      */
     std::vector<double> solve_newton(std::function<std::vector<double>(std::vector<double>)> &f,
-                                     const std::vector<double> &initial_guess, uint32_t max_iterations);
+                                     const std::vector<double> &initial_guess);
 
 private:
     Context m_context;

@@ -49,10 +49,10 @@ int main()
     Context context = Context(f);
     context.f_autonomous = f_autonomous;
     context.x_0 = {1, 1};
-    context.n = 4;
-    context.h = 1e-4;
+    context.adams_order = 5;
+    context.h = 1e-6;
     context.t_begin = 0;
-    context.t_end = 1000;
+    context.t_end = 10;
 
     std::thread rk(test_rk, context);
     std::thread ae(test_ae, context);
@@ -72,14 +72,14 @@ int main()
 void out(std::vector<std::tuple<double, std::vector<double>>> &res, const std::string& filename){
     std::ofstream file(filename);
 
-    // int i = 1;
+    int i = 1;
 
     for (auto &step: res)
     {
-        // i++;
-        // if (i % 10 != 0){
-        //     continue;
-        // }
+        i++;
+        if (i % 10 != 0){
+            continue;
+        }
 
         auto [t, x] = step;
 
