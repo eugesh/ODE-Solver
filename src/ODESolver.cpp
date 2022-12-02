@@ -8,7 +8,6 @@
 #include <functional>
 #include <utility>
 #include <iostream>
-#include <iomanip>
 
 void ODESolver::rk()
 {
@@ -125,20 +124,12 @@ void ODESolver::ae()
     computeA();
 
     // Compute n initial values of x
-    ComputeInitialAE(t, x);
+    ComputeInitialAdamsX(t, x);
 
     // Run Adams method
 
     // Create n initial values of f
-    std::vector<std::vector<double>> fs(m_context.adams_order);
-    for (algebra::size_type i = 0; i < Result.size(); ++i)
-    {
-        algebra::size_type index = Result.size() - 1 - i;
-        fs.at(i) = m_context.f(
-                std::get<0>(Result.at(index)),
-                std::get<1>(Result.at(index))
-        );
-    }
+    std::vector<std::vector<double>> fs = ComputeInitialAdamsF();
 
     while (t < m_context.t_end)
     {
@@ -180,20 +171,12 @@ void ODESolver::ai()
     computeB();
 
     // Compute n initial values of x
-    ComputeInitialAI(t, x);
+    ComputeInitialAdamsX(t, x);
+
+    // Compute initial f values
+    std::vector<std::vector<double>> fs = ComputeInitialAdamsF();
 
     // Run Adams method
-
-    // Create n initial values of f
-    std::vector<std::vector<double>> fs(m_context.adams_order - 1);
-    for (uint32_t i = 0; i < Result.size(); ++i)
-    {
-        uint32_t index = Result.size() - 1 - i;
-        fs.at(i) = m_context.f(
-                std::get<0>(Result.at(index)),
-                std::get<1>(Result.at(index))
-        );
-    }
 
     std::function<std::vector<double>(std::vector<double>)> f =
             [&fs, &t, this, &x](std::vector<double> y) -> std::vector<double>
@@ -205,11 +188,11 @@ void ODESolver::ai()
                     re *= B[0];
                 }
 
-                for (algebra::size_type j = 0; j < fs.size(); ++j)
+                for (algebra::size_type j = 0; j < m_context.adams_order - 1; ++j)
                 {
                     for (algebra::size_type i = 0; i < dim; ++i)
                     {
-                        res[i] += B[m_context.adams_order - 1 - j] * fs[j][i];
+                        res[i] += B[m_context.adams_order - 1 - j] * fs[j + 1][i];
                     }
                 }
 
@@ -302,31 +285,9 @@ ODESolver::ODESolver(const Context &context)
     dim = context.x_0.size();
 }
 
-void ODESolver::ComputeInitialAE(double &t, std::vector<double> &x)
+void ODESolver::ComputeInitialAdamsX(double &t, std::vector<double> &x)
 {
     for (uint32_t j = 0; j < m_context.adams_order; ++j)
-    {
-
-        // TODO optimize this
-        std::vector<double> k_1 = k1(t, x);
-        std::vector<double> k_2 = k2(t, x, k_1);
-        std::vector<double> k_3 = k3(t, x, k_2);
-        std::vector<double> k_4 = k4(t, x, k_3);
-
-        for (uint32_t i = 0; i < x.size(); ++i)
-        {
-            x.at(i) += 1.0 / 6.0 * (k_1.at(i) + 2 * k_2.at(i) + 2 * k_3.at(i) + k_4.at(i));
-        }
-
-        Result.emplace_back(t, x);
-
-        t += m_context.h;
-    }
-}
-
-void ODESolver::ComputeInitialAI(double &t, std::vector<double> &x)
-{
-    for (uint32_t j = 0; j < m_context.adams_order - 1; ++j)
     {
 
         // TODO optimize this
@@ -428,19 +389,11 @@ void ODESolver::pc()
     computeA();
     computeB();
 
-    // Compute n initial values of x for AE
-    ComputeInitialAE(t, x);
+    // Compute n initial values of x
+    ComputeInitialAdamsX(t, x);
 
     // Create n initial values of f
-    std::vector<std::vector<double>> fs(m_context.adams_order);
-    for (algebra::size_type i = 0; i < Result.size(); ++i)
-    {
-        algebra::size_type index = Result.size() - 1 - i;
-        fs.at(i) = m_context.f(
-                std::get<0>(Result.at(index)),
-                std::get<1>(Result.at(index))
-        );
-    }
+    std::vector<std::vector<double>> fs = ComputeInitialAdamsF();
 
     // Function to solve using Newton's method
     std::function<std::vector<double>(std::vector<double>)> f =
@@ -453,11 +406,11 @@ void ODESolver::pc()
                     re *= B[0];
                 }
 
-                for (algebra::size_type j = 0; j < fs.size(); ++j)
+                for (algebra::size_type j = 0; j < m_context.adams_order - 1; ++j)
                 {
                     for (algebra::size_type i = 0; i < dim; ++i)
                     {
-                        res[i] += B[m_context.adams_order - 1 - j] * fs[j][i];
+                        res[i] += B[m_context.adams_order - 1 - j] * fs[j + 1][i];
                     }
                 }
 
@@ -488,6 +441,7 @@ void ODESolver::pc()
         // Correct using ei
         x = m_newton_solver.solve_newton(f, x);
 
+        // Add iteration to the result and increment t
         Result.emplace_back(t, x);
 
         t += m_context.h;
@@ -499,5 +453,23 @@ void ODESolver::pc()
         }
         fs.at(fs.size() - 1) = m_context.f(t, x);
     }
+}
+
+std::vector<std::vector<double>> ODESolver::ComputeInitialAdamsF()
+{
+
+    // Create n initial values of f
+    std::vector<std::vector<double>> fs(m_context.adams_order);
+
+    for (uint32_t i = 0; i < Result.size(); ++i)
+    {
+        uint32_t index = Result.size() - 1 - i;
+        fs.at(i) = m_context.f(
+                std::get<0>(Result.at(index)),
+                std::get<1>(Result.at(index))
+        );
+    }
+
+    return fs;
 }
 

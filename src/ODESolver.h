@@ -75,14 +75,15 @@ private:
     void computeB();
 
     /**
-     * Compute initial values for adams methods extrapolating methods
+     * Compute initial values for Adams methods
      */
-    void ComputeInitialAE(double &t, std::vector<double> &x);
+    void ComputeInitialAdamsX(double &t, std::vector<double> &x);
 
     /**
-     * Compute initial values for adams methods interpolating methods
+     * Compute initial values for Adams methods
      */
-    void ComputeInitialAI(double &t, std::vector<double> &x);
+    std::vector<std::vector<double>> ComputeInitialAdamsF();
+
 
     /**
      * Coefficients Anj for Adams extrapolation method
