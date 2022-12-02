@@ -430,16 +430,19 @@ void ODESolver::pc()
     while (t < m_context.t_end)
     {
         // Create predictor using ae
+
+        std::vector<double> guess = x;
+
         for (algebra::size_type j = 0; j < m_context.adams_order; ++j)
         {
             for (algebra::size_type i = 0; i < dim; ++i)
             {
-                x.at(i) += A.at(m_context.adams_order - 1 - j) * fs.at(j).at(i) * m_context.h;
+                guess.at(i) += A.at(m_context.adams_order - 1 - j) * fs.at(j).at(i) * m_context.h;
             }
         }
 
         // Correct using ei
-        x = m_newton_solver.solve_newton(f, x);
+        x = m_newton_solver.solve_newton(f, guess);
 
         // Add iteration to the result and increment t
         Result.emplace_back(t, x);
@@ -457,8 +460,6 @@ void ODESolver::pc()
 
 std::vector<std::vector<double>> ODESolver::ComputeInitialAdamsF()
 {
-
-    // Create n initial values of f
     std::vector<std::vector<double>> fs(m_context.adams_order);
 
     for (uint32_t i = 0; i < Result.size(); ++i)
