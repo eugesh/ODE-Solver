@@ -76,3 +76,17 @@ ae.close();
 ```
 
 `odeSolver.Result` has type of `std::vector<std::tuple<double, std::vector<double>>>`.
+
+# How to compile and run test
+
+Use Makefile by running:
+
+```shell
+make run
+```
+
+Results will be stored in `ae.dat`, `ai.dat`, `rk.dat`, `precor.dat`, `rosen.dat`. Plot them using:
+
+```shell
+gnuplot plot.plt
+```
