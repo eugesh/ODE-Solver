@@ -52,7 +52,7 @@ int main()
     context.adams_order = 5;
     context.h = 1e-4;
     context.t_begin = 0;
-    context.t_end = 10;
+    context.t_end = 20;
 
     std::thread rk(test_rk, context);
     std::thread ae(test_ae, context);
@@ -128,7 +128,7 @@ void test_rosen(const Context &context){
 void test_precor(const Context &context){
     ODESolver odeSolver = ODESolver(context);
 
-    odeSolver.pc();
+    odeSolver.precor();
 
     out(odeSolver.Result, "precor.dat");
 }

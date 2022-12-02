@@ -373,7 +373,7 @@ void ODESolver::rosenbrock()
     }
 }
 
-void ODESolver::pc()
+void ODESolver::precor()
 {
     if (!m_context.f)
     {

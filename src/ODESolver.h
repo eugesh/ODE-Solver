@@ -41,7 +41,7 @@ public:
     /**
      * Predictor–corrector interrogator
      */
-    void pc();
+    void precor();
 
     std::vector<std::tuple<double, std::vector<double>>> Result;
 
